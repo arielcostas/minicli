@@ -14,8 +14,9 @@ public class CliApplication {
 		ArgumentParser parser = new ArgumentParser();
 		var invocation = parser.parse(args);
 
-		if (invocation.command.isEmpty() || invocation.command.equals("help")) {
+		if (invocation.command == null || invocation.command.isBlank() || invocation.command.equals("help")) {
 			showHelp(classes);
+			return;
 		}
 
 		var commandClass = classes.stream()
