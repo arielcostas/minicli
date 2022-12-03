@@ -24,7 +24,7 @@ public class Invocation {
 	}
 
 	public Boolean getFlag(String key) {
-		return flags.getOrDefault(key, false);
+		return flags.getOrDefault(key, null);
 	}
 
 	public void putFlag(String key, Boolean value) {
@@ -32,7 +32,7 @@ public class Invocation {
 	}
 
 	public String getParameter(String key) {
-		return params.getOrDefault(key, "");
+		return params.getOrDefault(key, null);
 	}
 
 	public void putParameter(String key, String value) {

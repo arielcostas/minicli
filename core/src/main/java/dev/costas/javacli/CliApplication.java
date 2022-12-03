@@ -45,10 +45,28 @@ public class CliApplication {
 
 				if (annotations[0] instanceof Flag param) {
 					var value = args.getFlag(param.name());
+					if (value == null) {
+						value = args.getFlag(param.shortName());
+						if (value == null) {
+							if (param.required()) {
+								throw new RuntimeException("Missing required flag: " + param.name());
+							}
+							value = param.defaultValue();
+						}
+					}
 					field.setAccessible(true);
 					field.set(instance, value);
 				} else if (annotations[0] instanceof Parameter param) {
 					var value = args.getParameter(param.name());
+					if (value == null) {
+						value = args.getParameter(param.shortName());
+						if (value == null) {
+							if (param.required()) {
+								throw new RuntimeException("Missing required parameter: " + param.name());
+							}
+							value = param.defaultValue();
+						}
+					}
 					field.setAccessible(true);
 					field.set(instance, value);
 				}
