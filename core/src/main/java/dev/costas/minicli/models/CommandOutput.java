@@ -1,4 +1,4 @@
-package dev.costas.javacli;
+package dev.costas.minicli.models;
 
 public record CommandOutput(
 		boolean success,

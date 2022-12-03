@@ -1,11 +1,9 @@
 package com.example.javacli_example;
 
-import dev.costas.javacli.CommandOutput;
-import dev.costas.javacli.annotation.Command;
-import dev.costas.javacli.annotation.Flag;
-import dev.costas.javacli.annotation.Parameter;
-
-import java.util.function.Supplier;
+import dev.costas.minicli.models.CommandOutput;
+import dev.costas.minicli.annotation.Command;
+import dev.costas.minicli.annotation.Flag;
+import dev.costas.minicli.annotation.Parameter;
 
 @Command(name = "hello", description = "Prints hello world")
 public class HelloWorldCommand {

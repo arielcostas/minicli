@@ -1,4 +1,4 @@
-package dev.costas.javacli.annotation;
+package dev.costas.minicli.annotation;
 
 import java.lang.annotation.*;
 

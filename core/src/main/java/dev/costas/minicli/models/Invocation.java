@@ -1,4 +1,4 @@
-package dev.costas.javacli;
+package dev.costas.minicli.models;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +23,16 @@ public class Invocation {
 		this.flags = flags;
 	}
 
+	private String normalize(String str) {
+		return str.toLowerCase().trim();
+	}
+
+	public void setCommand(String command) {
+		this.command = normalize(command);
+	}
+
 	public Boolean getFlag(String key) {
-		return flags.getOrDefault(key, null);
+		return flags.getOrDefault(normalize(key), null);
 	}
 
 	public void putFlag(String key, Boolean value) {
@@ -32,7 +40,7 @@ public class Invocation {
 	}
 
 	public String getParameter(String key) {
-		return params.getOrDefault(key, null);
+		return params.getOrDefault(normalize(key), null);
 	}
 
 	public void putParameter(String key, String value) {

@@ -1,4 +1,4 @@
-package dev.costas.javacli.args;
+package dev.costas.minicli.models;
 
 public record Flag(
 		boolean value
