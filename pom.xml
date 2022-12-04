@@ -4,14 +4,33 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>dev.costas.javacli</groupId>
-	<artifactId>parent</artifactId>
-	<version>1.0.0</version>
-	<packaging>pom</packaging>
-	<modules>
-		<module>core</module>
-		<module>example_app</module>
-	</modules>
+	<groupId>dev.costas</groupId>
+	<artifactId>minicli</artifactId>
+	<version>1.0.0-BETA1</version>
+	<packaging>jar</packaging>
+
+	<name>Minicli</name>
+	<description>A command-line application framework for Java.</description>
+	<url>https://github.com/arielcostas/minicli</url>
+	<licenses>
+		<license>
+			<name>BSD 3-Clause License</name>
+			<url>https://github.com/arielcostas/minicli/blob/main/LICENSE</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>arielcostas</id>
+			<name>Ariel Costas</name>
+			<url>https://costas.dev</url>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:git:https://github.com/arielcostas/minicli</connection>
+		<developerConnection>scm:git:ssh://git@github.com:arielcostas/minicli.git</developerConnection>
+		<url>https://github.com/arielcostas/minicli/tree/main</url>
+	</scm>
+
 
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
@@ -19,4 +38,74 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.10.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-nop</artifactId>
+			<version>1.7.32</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.4.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.13</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>false</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
