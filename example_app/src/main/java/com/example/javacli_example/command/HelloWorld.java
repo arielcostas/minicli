@@ -1,4 +1,4 @@
-package com.example.javacli_example;
+package com.example.javacli_example.command;
 
 import dev.costas.minicli.models.CommandOutput;
 import dev.costas.minicli.annotation.Command;
@@ -6,7 +6,7 @@ import dev.costas.minicli.annotation.Flag;
 import dev.costas.minicli.annotation.Parameter;
 
 @Command(name = "hello", description = "Prints hello world")
-public class HelloWorldCommand {
+public class HelloWorld {
 	@Parameter(name = "name", description = "The name to print", required = true)
 	public String nameToGreet;
 

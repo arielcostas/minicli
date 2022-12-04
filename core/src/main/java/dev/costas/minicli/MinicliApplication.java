@@ -7,31 +7,36 @@ import org.reflections.Reflections;
 import java.io.OutputStream;
 import java.util.List;
 
-public class CliApplication {
+public class MinicliApplication {
 	private final ArgumentParser argumentParser;
 	private final CommandExecutor commandExecutor;
 	private final HelpGenerator helpGenerator;
 	private final OutputStream outputStream;
 
-	public CliApplication(ArgumentParser argumentParser, CommandExecutor commandExecutor, HelpGenerator helpGenerator, OutputStream outputStream) {
+	protected MinicliApplication(ArgumentParser argumentParser, CommandExecutor commandExecutor, HelpGenerator helpGenerator, OutputStream outputStream) {
 		this.argumentParser = argumentParser;
 		this.commandExecutor = commandExecutor;
 		this.helpGenerator = helpGenerator;
 		this.outputStream = outputStream;
 	}
 
-	public static CliApplication withDefaults() {
-		return new CliApplication(new DefaultArgumentParser(), new DefaultCommandExecutor(), new LinearHelpGenerator(), System.out);
+	public static MinicliApplicationBuilder builder() {
+		return new MinicliApplicationBuilder();
 	}
 
+	/**
+	 * Scans the given package for commands and executes the command with the given arguments.
+	 *
+	 * @param clazz The package to scan for commands. It also scans subpackages.
+	 * @param args  The arguments to pass to the command.
+	 */
 	public void run(Class<?> clazz, String[] args) {
 		var classes = getCommands(clazz.getPackageName());
 
-		ArgumentParser parser = new DefaultArgumentParser();
-		var invocation = parser.parse(args);
+		var invocation = argumentParser.parse(args);
 
 		if (invocation.command == null || invocation.command.isBlank() || invocation.command.equals("help")) {
-			this.helpGenerator.show(classes, outputStream);
+			this.helpGenerator.show(classes, outputStream, " - ");
 			return;
 		}
 
@@ -44,17 +49,18 @@ public class CliApplication {
 				.findFirst();
 
 		if (commandClass.isEmpty()) {
-			this.helpGenerator.show(classes, outputStream);
+			this.helpGenerator.show(classes, outputStream, " - ");
 		} else {
-			CommandExecutor executor = new DefaultCommandExecutor();
-			executor.execute(commandClass.get(), invocation);
+			commandExecutor.execute(commandClass.get(), invocation);
 		}
 	}
 
 	/**
 	 * Gets all classes in classpath that are annotated with @Command
+	 *
+	 * @param prefix The package to scan for commands.
 	 */
-	private static List<Class<?>> getCommands(String prefix) {
+	protected List<Class<?>> getCommands(String prefix) {
 		var reflections = new Reflections(prefix);
 		return reflections.getTypesAnnotatedWith(Command.class).stream().toList();
 	}

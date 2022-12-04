@@ -9,6 +9,9 @@ public class Invocation {
 	private Map<String, Boolean> flags;
 
 	public Invocation() {
+		this.command = null;
+		this.params = new HashMap<>();
+		this.flags = new HashMap<>();
 	}
 
 	public Invocation(String command) {
