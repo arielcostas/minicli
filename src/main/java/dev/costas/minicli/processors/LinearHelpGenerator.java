@@ -16,10 +16,12 @@ public class LinearHelpGenerator implements HelpGenerator {
 		ps.println("Usage: <command> [options] [arguments]");
 		ps.println("===== Help =====");
 
+		var spaces = " ".repeat(LEFT_MARGIN);
+
 		for (var clazz : classes) {
 			var command = clazz.getAnnotation(Command.class);
-			ps.println(command.name() + separator + command.description());
+			ps.println(spaces + command.name() + separator + command.description());
 		}
-		ps.println("help" + separator + "Shows this help");
+		ps.println(spaces + "help" + separator + "Shows this help");
 	}
 }
