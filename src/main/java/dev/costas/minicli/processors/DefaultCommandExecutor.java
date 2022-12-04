@@ -5,7 +5,18 @@ import dev.costas.minicli.annotation.Parameter;
 import dev.costas.minicli.models.CommandOutput;
 import dev.costas.minicli.models.Invocation;
 
+/**
+ * Default implementation of the {@link CommandExecutor} interface.
+ */
 public class DefaultCommandExecutor implements CommandExecutor {
+	/**
+	 * Executes the command by injecting the parameters and flags, and calling the run method.
+	 * <p>
+	 * The output of the command is printed to the standard output.
+	 *
+	 * @param commandClass The class of the command to execute.
+	 * @param args The invocation of the command.
+	 */
 	public void execute(Class<?> commandClass, Invocation args) {
 		try {
 			var instance = commandClass.getDeclaredConstructor().newInstance();

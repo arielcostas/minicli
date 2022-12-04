@@ -7,6 +7,9 @@ import org.reflections.Reflections;
 import java.io.OutputStream;
 import java.util.List;
 
+/**
+ * The main class of the application.
+ */
 public class MinicliApplication {
 	private final ArgumentParser argumentParser;
 	private final CommandExecutor commandExecutor;
@@ -35,8 +38,8 @@ public class MinicliApplication {
 
 		var invocation = argumentParser.parse(args);
 
-		if (invocation.command == null || invocation.command.isBlank() || invocation.command.equals("help")) {
-			this.helpGenerator.show(classes, outputStream, " - ");
+		if (invocation.getCommand() == null || invocation.getCommand().isBlank() || invocation.getCommand().equals("help")) {
+			this.helpGenerator.show(classes, outputStream);
 			return;
 		}
 
@@ -44,12 +47,12 @@ public class MinicliApplication {
 				.filter(c -> {
 					var name = c.getAnnotation(Command.class).name().toLowerCase();
 					var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
-					return name.equals(invocation.command) || shortName.equals(invocation.command);
+					return name.equals(invocation.getCommand()) || shortName.equals(invocation.getCommand());
 				})
 				.findFirst();
 
 		if (commandClass.isEmpty()) {
-			this.helpGenerator.show(classes, outputStream, " - ");
+			this.helpGenerator.show(classes, outputStream);
 		} else {
 			commandExecutor.execute(commandClass.get(), invocation);
 		}

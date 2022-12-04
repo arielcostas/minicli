@@ -6,12 +6,14 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
+/**
+ * Generates the help text for the commands by printing the command name and description, one command per line.
+ */
 public class LinearHelpGenerator implements HelpGenerator {
 	public static final int LEFT_MARGIN = 4;
+	public static final String SEPARATOR = " - ";
 
-
-	@Override
-	public void show(List<Class<?>> classes, OutputStream os, String separator) {
+	public void show(List<Class<?>> classes, OutputStream os) {
 		var ps = new PrintStream(os);
 		ps.println("Usage: <command> [options] [arguments]");
 		ps.println("===== Help =====");
@@ -20,8 +22,8 @@ public class LinearHelpGenerator implements HelpGenerator {
 
 		for (var clazz : classes) {
 			var command = clazz.getAnnotation(Command.class);
-			ps.println(spaces + command.name() + separator + command.description());
+			ps.println(spaces + command.name() + SEPARATOR + command.description());
 		}
-		ps.println(spaces + "help" + separator + "Shows this help");
+		ps.println(spaces + "help" + SEPARATOR + "Shows this help");
 	}
 }

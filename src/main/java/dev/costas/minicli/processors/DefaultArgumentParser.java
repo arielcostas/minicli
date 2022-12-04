@@ -2,10 +2,18 @@ package dev.costas.minicli.processors;
 
 import dev.costas.minicli.models.Invocation;
 
+/**
+ * Default argument parser implementation.
+ */
 public class DefaultArgumentParser implements ArgumentParser {
 	public DefaultArgumentParser() {
 	}
 
+	/**
+	 * Parses the arguments and returns an invocation object.
+	 * @param args the arguments to parse, including the name of the command
+	 * @return the invocation object
+	 */
 	@Override
 	public Invocation parse(String[] args) {
 		var invocation = new Invocation();
