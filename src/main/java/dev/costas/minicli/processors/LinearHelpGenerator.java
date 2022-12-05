@@ -30,7 +30,14 @@ public class LinearHelpGenerator implements HelpGenerator {
 			var parameters = this.getParameters(clazz);
 			var flags = this.getFlags(clazz);
 
-			ps.println(SPACES + command.name() + SEPARATOR + command.description());
+			var l = new StringBuilder(SPACES);
+			l.append(command.name());
+			if (!command.shortname().isEmpty()) {
+				l.append(", ").append(command.shortname());
+			}
+			l.append(SEPARATOR).append(command.description());
+			ps.println(l);
+
 			ps.println(SPACES.repeat(2) + "Parameters:");
 			for (var parameter : parameters) {
 				printOption(parameter.name(), parameter.shortName(), parameter.description(), ps);
