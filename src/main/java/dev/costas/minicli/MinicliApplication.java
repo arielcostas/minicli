@@ -1,6 +1,7 @@
 package dev.costas.minicli;
 
 import dev.costas.minicli.annotation.Command;
+import dev.costas.minicli.models.ApplicationParams;
 import dev.costas.minicli.processors.*;
 import org.reflections.Reflections;
 
@@ -15,12 +16,14 @@ public class MinicliApplication {
 	private final CommandExecutor commandExecutor;
 	private final HelpGenerator helpGenerator;
 	private final OutputStream outputStream;
+	private final ApplicationParams application;
 
-	protected MinicliApplication(ArgumentParser argumentParser, CommandExecutor commandExecutor, HelpGenerator helpGenerator, OutputStream outputStream) {
+	protected MinicliApplication(ArgumentParser argumentParser, CommandExecutor commandExecutor, HelpGenerator helpGenerator, OutputStream outputStream, ApplicationParams application) {
 		this.argumentParser = argumentParser;
 		this.commandExecutor = commandExecutor;
 		this.helpGenerator = helpGenerator;
 		this.outputStream = outputStream;
+		this.application = application;
 	}
 
 	public static MinicliApplicationBuilder builder() {
@@ -39,7 +42,7 @@ public class MinicliApplication {
 		var invocation = argumentParser.parse(args);
 
 		if (invocation.getCommand() == null || invocation.getCommand().isBlank() || invocation.getCommand().equals("help")) {
-			this.helpGenerator.show(classes, outputStream);
+			this.helpGenerator.show(application, classes, outputStream);
 			return;
 		}
 
@@ -52,7 +55,7 @@ public class MinicliApplication {
 				.findFirst();
 
 		if (commandClass.isEmpty()) {
-			this.helpGenerator.show(classes, outputStream);
+			this.helpGenerator.show(application, classes, outputStream);
 		} else {
 			commandExecutor.execute(commandClass.get(), invocation);
 		}

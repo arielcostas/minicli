@@ -1,6 +1,7 @@
 package dev.costas.minicli.processors;
 
 import dev.costas.minicli.annotation.Command;
+import dev.costas.minicli.models.ApplicationParams;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -13,7 +14,7 @@ public class LinearHelpGenerator implements HelpGenerator {
 	public static final int LEFT_MARGIN = 4;
 	public static final String SEPARATOR = " - ";
 
-	public void show(List<Class<?>> classes, OutputStream os) {
+	public void show(ApplicationParams application, List<Class<?>> classes, OutputStream os) {
 		var ps = new PrintStream(os);
 		ps.println("Usage: <command> [options] [arguments]");
 		ps.println("===== Help =====");

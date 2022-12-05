@@ -1,5 +1,6 @@
 package dev.costas.minicli;
 
+import dev.costas.minicli.models.ApplicationParams;
 import dev.costas.minicli.processors.*;
 
 import java.io.OutputStream;
@@ -12,6 +13,7 @@ public class MinicliApplicationBuilder {
 	private CommandExecutor commandExecutor;
 	private HelpGenerator helpGenerator;
 	private OutputStream outputStream;
+	private ApplicationParams applicationParams;
 
 	/**
 	 * Creates a new builder with the default values.
@@ -20,7 +22,18 @@ public class MinicliApplicationBuilder {
 		this.argumentParser = new DefaultArgumentParser();
 		this.commandExecutor = new DefaultCommandExecutor();
 		this.helpGenerator = new LinearHelpGenerator();
+		this.applicationParams = null;
 		this.outputStream = System.out;
+	}
+
+	/**
+	 * Sets the application parameters used to provide help messages.
+	 *
+	 * @param application the application parameters
+	 */
+	public MinicliApplicationBuilder withApplicationParams(ApplicationParams application) {
+		this.applicationParams = application;
+		return this;
 	}
 
 	/**
@@ -68,6 +81,6 @@ public class MinicliApplicationBuilder {
 	 * @return The {@link MinicliApplication}.
 	 */
 	public MinicliApplication build() {
-		return new MinicliApplication(argumentParser, commandExecutor, helpGenerator, outputStream);
+		return new MinicliApplication(argumentParser, commandExecutor, helpGenerator, outputStream, applicationParams);
 	}
 }
