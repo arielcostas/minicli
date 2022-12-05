@@ -1,9 +1,12 @@
 package dev.costas.minicli.processors;
 
 import dev.costas.minicli.annotation.Flag;
+import dev.costas.minicli.annotation.OnInvoke;
 import dev.costas.minicli.annotation.Parameter;
 import dev.costas.minicli.models.CommandOutput;
 import dev.costas.minicli.models.Invocation;
+
+import java.util.Arrays;
 
 /**
  * Default implementation of the {@link CommandExecutor} interface.
@@ -32,9 +35,6 @@ public class DefaultCommandExecutor implements CommandExecutor {
 					if (value == null) {
 						value = args.getFlag(param.shortName());
 						if (value == null) {
-							if (param.required()) {
-								throw new RuntimeException("Missing required flag: " + param.name());
-							}
 							value = param.defaultValue();
 						}
 					}
@@ -55,7 +55,17 @@ public class DefaultCommandExecutor implements CommandExecutor {
 					field.set(instance, value);
 				}
 			}
-			var result = (CommandOutput) commandClass.getMethod("run").invoke(instance);
+
+			var method = Arrays
+					.stream(commandClass.getMethods())
+					.filter(m -> m.getAnnotation(OnInvoke.class) != null)
+					.filter(m -> m.getReturnType() == CommandOutput.class)
+					.findFirst();
+
+			if (method.isEmpty()) {
+				throw new RuntimeException("No method annotated with @OnInvoke found.");
+			}
+			var result = (CommandOutput) method.get().invoke(instance);
 			System.out.println(result.output());
 		} catch (Exception e) {
 			e.printStackTrace();
