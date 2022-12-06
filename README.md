@@ -111,6 +111,12 @@ The `MinicliApplication` class is used to run the application. It takes an array
 should be the command-line arguments passed to the application. The `run` method will then parse the arguments and
 execute the appropriate command.
 
+## Versioning
+
+Minicli uses [Semantic Versioning](https://semver.org/). The version number is in the format `MAJOR.MINOR.PATCH`, where
+`MAJOR` is incremented when a breaking change is made, `MINOR` is incremented when new features are added, or
+non-breaking changes are made, and `PATCH` is incremented when bug fixes are made.
+
 ## Contributing
 
 Contributions are welcome! If you find a bug or have a feature request, please open an issue. If you want to contribute
@@ -119,3 +125,15 @@ code, please open a pull request.
 ## Licence
 
 This project is licensed under the BSD 3-Clause License. See the [LICENCE](LICENCE) file for more details.
+
+## Acknowledgements
+
+This framework was created from scratch. It was slightly inspired by Spring Boot's REST controller annotations, but
+otherwise has no relation with the Spring framework. While writing this document, it came to my attention that there is
+another framework called [JCommander](https://jcommander.org/), which is also a command-line application framework for
+Java. This project was not inspired by JCommander, but it is worth noting that it exists.
+
+I'd like to thank [JetBrains](https://www.jetbrains.com/) for providing me with a free student license for their
+IntelliJ IDEA IDE. This project was developed using IntelliJ IDEA. I'd also like to thank GitHub for their developer
+student pack, which provided me with a free student license for GitHub Copilot, which is really useful for writing
+documentation or boilerplate-y code.

@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
  * <p>
  * A single public method returning {@code CommandOutput} must be annotated with this annotation.
  * If more than one method is annotated with this annotation, only one of them will be executed.
+ *
+ * @since 1.0.0
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
  * <p>
  * For example, you can declare a `@Parameter(name="username") String name` and the user will
  * use it with `--username VALUE`.
+ *
+ * @since 1.0.0
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
