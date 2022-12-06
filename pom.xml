@@ -6,7 +6,7 @@
 
 	<groupId>dev.costas</groupId>
 	<artifactId>minicli</artifactId>
-	<version>1.0.0-BETA1</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
 	<name>Minicli</name>

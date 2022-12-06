@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
  *     <li>Using the flag short name, e.g. {@code -v}.</li>
  *     <li>Using the flag name and value, e.g. {@code --verbose true}.</li>
  *     <li>Using the flag short name and value, e.g. {@code -v true}.</li>
+ * </ul>
  *
  * @since 1.0.0
  */
