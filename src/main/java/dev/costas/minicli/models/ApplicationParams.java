@@ -1,5 +1,10 @@
 package dev.costas.minicli.models;
 
+/**
+ * Application parameters, such as the name of the application, the version, the author, etc.
+ *
+ * @since 1.0.0
+ */
 public final class ApplicationParams {
 	/**
 	 * The name of the application. For example `FooApp`.

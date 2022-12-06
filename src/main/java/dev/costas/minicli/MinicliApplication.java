@@ -10,6 +10,8 @@ import java.util.List;
 
 /**
  * The main class of the application.
+ *
+ * @since 1.0.0
  */
 public class MinicliApplication {
 	private final ArgumentParser argumentParser;

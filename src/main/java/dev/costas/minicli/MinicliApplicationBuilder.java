@@ -7,6 +7,8 @@ import java.io.OutputStream;
 
 /**
  * A builder for {@link MinicliApplication}.
+ *
+ * @since 1.0.0
  */
 public class MinicliApplicationBuilder {
 	private ArgumentParser argumentParser;

@@ -10,6 +10,8 @@ import java.util.Arrays;
 
 /**
  * Default implementation of the {@link CommandExecutor} interface.
+ *
+ * @since 1.0.0
  */
 public class DefaultCommandExecutor implements CommandExecutor {
 	/**

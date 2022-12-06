@@ -4,6 +4,8 @@ import dev.costas.minicli.models.Invocation;
 
 /**
  * Parses the arguments and returns an invocation object.
+ *
+ * @since 1.0.0
  */
 public interface ArgumentParser {
 

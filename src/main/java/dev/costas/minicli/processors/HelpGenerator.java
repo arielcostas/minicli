@@ -7,6 +7,8 @@ import java.util.List;
 
 /**
  * Generates the help text for the commands.
+ *
+ * @since 1.0.0
  */
 public interface HelpGenerator {
 	/**

@@ -4,6 +4,8 @@ import dev.costas.minicli.models.Invocation;
 
 /**
  * Default argument parser implementation.
+ *
+ * @since 1.0.0
  */
 public class DefaultArgumentParser implements ArgumentParser {
 	public DefaultArgumentParser() {

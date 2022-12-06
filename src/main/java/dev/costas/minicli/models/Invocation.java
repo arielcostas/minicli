@@ -5,6 +5,8 @@ import java.util.Map;
 
 /**
  * Represents a call/invocation of a command, with the command name, parameters and flags.
+ *
+ * @since 1.0.0
  */
 public class Invocation {
 	/**

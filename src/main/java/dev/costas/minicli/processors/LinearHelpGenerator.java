@@ -14,6 +14,8 @@ import java.util.List;
 
 /**
  * Generates the help text for the commands by printing the command name and description, one command per line.
+ *
+ * @since 1.0.0
  */
 public class LinearHelpGenerator implements HelpGenerator {
 	public static final String SPACES = " ".repeat(4);
