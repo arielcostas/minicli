@@ -1,5 +1,6 @@
-package dev.costas.minicli.processors;
+package dev.costas.minicli.defaults;
 
+import dev.costas.minicli.framework.ArgumentParser;
 import dev.costas.minicli.models.Invocation;
 
 /**
@@ -7,7 +8,7 @@ import dev.costas.minicli.models.Invocation;
  *
  * @since 1.0.0
  */
-public class DefaultArgumentParser implements ArgumentParser {
+public final class DefaultArgumentParser implements ArgumentParser {
 	public DefaultArgumentParser() {
 	}
 

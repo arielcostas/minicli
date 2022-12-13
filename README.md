@@ -116,19 +116,19 @@ Instantiator class with your own implementation. This is done by calling the `wi
 `MinicliApplicationBuilder` class. For example:
 
 ```java
-import dev.costas.minicli.Instantiator;
+import dev.costas.minicli.framework.Instantiator;
 
 public class GuiceInstantiator implements Instantiator {
 	private final Injector injector;
-	
+
 	public GuiceInstantiator(Injector injector) {
 		this.injector = injector;
 	}
-	
-    @Override
-    public <T> T instantiate(Class<T> clazz) {
-        return injector.getInstance(clazz);
-    }
+
+	@Override
+	public <T> T instantiate(Class<T> clazz) {
+		return injector.getInstance(clazz);
+	}
 }
 ```
 

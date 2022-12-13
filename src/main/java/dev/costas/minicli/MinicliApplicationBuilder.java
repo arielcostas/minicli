@@ -1,7 +1,14 @@
 package dev.costas.minicli;
 
+import dev.costas.minicli.defaults.DefaultArgumentParser;
+import dev.costas.minicli.defaults.DefaultCommandExecutor;
+import dev.costas.minicli.defaults.DefaultInstantiator;
+import dev.costas.minicli.defaults.LinearHelpGenerator;
+import dev.costas.minicli.framework.ArgumentParser;
+import dev.costas.minicli.framework.CommandExecutor;
+import dev.costas.minicli.framework.HelpGenerator;
+import dev.costas.minicli.framework.Instantiator;
 import dev.costas.minicli.models.ApplicationParams;
-import dev.costas.minicli.processors.*;
 
 import java.io.OutputStream;
 

@@ -1,4 +1,4 @@
-package dev.costas.minicli.processors;
+package dev.costas.minicli.framework;
 
 import dev.costas.minicli.RunnableCommand;
 import dev.costas.minicli.models.Invocation;

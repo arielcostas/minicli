@@ -1,8 +1,9 @@
-package dev.costas.minicli.processors;
+package dev.costas.minicli.defaults;
 
 import dev.costas.minicli.annotation.Command;
 import dev.costas.minicli.annotation.Flag;
 import dev.costas.minicli.annotation.Parameter;
+import dev.costas.minicli.framework.HelpGenerator;
 import dev.costas.minicli.models.ApplicationParams;
 
 import java.io.OutputStream;
@@ -17,7 +18,7 @@ import java.util.List;
  *
  * @since 1.0.0
  */
-public class LinearHelpGenerator implements HelpGenerator {
+public final class LinearHelpGenerator implements HelpGenerator {
 	private static final String SPACES = " ".repeat(4);
 	private static final String SEPARATOR = " - ";
 

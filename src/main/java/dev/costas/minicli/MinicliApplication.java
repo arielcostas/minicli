@@ -3,7 +3,7 @@ package dev.costas.minicli;
 import dev.costas.minicli.annotation.Command;
 import dev.costas.minicli.exceptions.QuitException;
 import dev.costas.minicli.models.ApplicationParams;
-import dev.costas.minicli.processors.*;
+import dev.costas.minicli.framework.*;
 import org.reflections.Reflections;
 
 import java.io.OutputStream;

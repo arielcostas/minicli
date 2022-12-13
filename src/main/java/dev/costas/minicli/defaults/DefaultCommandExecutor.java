@@ -1,8 +1,9 @@
-package dev.costas.minicli.processors;
+package dev.costas.minicli.defaults;
 
 import dev.costas.minicli.RunnableCommand;
 import dev.costas.minicli.annotation.Flag;
 import dev.costas.minicli.annotation.Parameter;
+import dev.costas.minicli.framework.CommandExecutor;
 import dev.costas.minicli.models.Invocation;
 
 import java.io.PrintStream;
@@ -13,7 +14,7 @@ import java.util.Arrays;
  *
  * @since 1.0.0
  */
-public class DefaultCommandExecutor implements CommandExecutor {
+public final class DefaultCommandExecutor implements CommandExecutor {
 	/**
 	 * Executes the command by injecting the parameters and flags, and calling the run method.
 	 * <p>
