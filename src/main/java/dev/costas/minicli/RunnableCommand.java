@@ -1,6 +1,5 @@
 package dev.costas.minicli;
 
-import dev.costas.minicli.annotation.OnInvoke;
 import dev.costas.minicli.models.CommandOutput;
 
 /**
@@ -8,6 +7,5 @@ import dev.costas.minicli.models.CommandOutput;
  * interface, it will be ignored.
  */
 public interface RunnableCommand {
-	@OnInvoke
 	CommandOutput run();
 }
