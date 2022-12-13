@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -29,35 +30,57 @@ public final class LinearHelpGenerator implements HelpGenerator {
 
 		for (var clazz : classes) {
 			ps.println();
-			var command = clazz.getAnnotation(Command.class);
-			var parameters = this.getParameters(clazz);
-			var flags = this.getFlags(clazz);
-
-			var l = new StringBuilder(SPACES);
-			l.append(command.name());
-			if (!command.shortname().isEmpty()) {
-				l.append(", ").append(command.shortname());
-			}
-			l.append(SEPARATOR).append(command.description());
-			ps.println(l);
-
-			if (parameters.size() > 0) {
-				ps.println(SPACES.repeat(2) + "Parameters:");
-				for (var parameter : parameters) {
-					printOption(parameter.name(), parameter.shortName(), parameter.description(), ps);
-				}
-			}
-
-			if (flags.size() > 0) {
-				ps.println(SPACES.repeat(2) + "Flags:");
-				for (var flag : flags) {
-					printOption(flag.name(), flag.shortName(), flag.description(), ps);
-				}
-			}
+			this.showCommand(clazz, os);
 		}
+
 		ps.println();
 		ps.println(SPACES + "h, help" + SEPARATOR + "Shows this help");
 		ps.println(SPACES + "q, quit, exit" + SEPARATOR + "Exits the program");
+	}
+
+	@Override
+	public void show(ApplicationParams application, Class<?> clazz, OutputStream os) {
+		this.showCommand(clazz, os);
+	}
+
+	private void showCommand(Class<?> clazz, OutputStream os) {
+		var ps = new PrintStream(os);
+
+		var commandAnnotation = clazz.getAnnotation(Command.class);
+		var parameters = this.getParameters(clazz);
+		var flags = this.getFlags(clazz);
+
+		printCommandName(commandAnnotation.name(), commandAnnotation.shortname(), commandAnnotation.description(), ps);
+		printFlags(flags, ps);
+		printParameters( parameters, ps);
+	}
+
+	private void printCommandName(String name, String shortName, String description, PrintStream ps) {
+		var l = new StringBuilder(SPACES);
+		l.append(name);
+		if (!shortName.isEmpty()) {
+			l.append(", ").append(shortName);
+		}
+		l.append(SEPARATOR).append(description);
+		ps.println(l);
+	}
+
+	private void printFlags(List<Flag> flags, PrintStream ps) {
+		if (flags.size() > 0) {
+			ps.println(SPACES.repeat(2) + "Flags:");
+			for (var flag : flags) {
+				printOption(flag.name(), flag.shortName(), flag.description(), ps);
+			}
+		}
+	}
+
+	private void printParameters(List<Parameter> parameters, PrintStream ps) {
+		if (parameters.size() > 0) {
+			ps.println(SPACES.repeat(2) + "Parameters:");
+			for (var parameter : parameters) {
+				printOption(parameter.name(), parameter.shortName(), parameter.description(), ps);
+			}
+		}
 	}
 
 	private void printOption(String name, String shortName, String description, PrintStream ps) {
