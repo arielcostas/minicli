@@ -12,16 +12,22 @@ import java.lang.annotation.*;
 public @interface Command {
 	/**
 	 * The name of the command, used to invoke it.
+	 *
+	 * @return The name of the command.
 	 */
 	String name();
 
 	/**
 	 * The short name of the command, used to invoke it.
+	 *
+	 * @return The short name of the command.
 	 */
 	String shortname() default "";
 
 	/**
 	 * The description of the command, used for the help command.
+	 *
+	 * @return The description of the command.
 	 */
 	String description() default "";
 }

@@ -62,34 +62,70 @@ public class Invocation {
 		return str.toLowerCase().trim();
 	}
 
+	/**
+	 * Gets the name of the command to be invoked.
+	 * @return The name of the command to be invoked.
+	 */
 	public String getCommand() {
 		return command;
 	}
 
+	/**
+	 * Sets the name of the command to be invoked.
+	 * @param command The name of the command to be invoked.
+	 */
 	public void setCommand(String command) {
 		this.command = normalize(command);
 	}
 
+	/**
+	 * Gets the value of the flag with the given name.
+	 * @param key The name of the flag to get.
+	 * @return The value of the flag.
+	 */
 	public Boolean getFlag(String key) {
 		return flags.getOrDefault(normalize(key), null);
 	}
 
+	/**
+	 * Sets the value of the flag with the given name.
+	 * @param key The name of the flag to set.
+	 * @param value The value of the flag.
+	 */
 	public void putFlag(String key, Boolean value) {
 		flags.put(key, value);
 	}
 
+	/**
+	 * Gets the value of the parameter with the given name.
+	 * @param key The name of the parameter to get.
+	 * @return The value of the parameter.
+	 */
 	public String getParameter(String key) {
 		return params.getOrDefault(normalize(key), null);
 	}
 
+	/**
+	 * Sets the value of the parameter with the given name.
+	 * @param key The name of the parameter to set.
+	 * @param value The value of the parameter.
+	 */
 	public void putParameter(String key, String value) {
 		params.put(key, value);
 	}
 
+	/**
+	 * Gets the parameters of the command.
+	 * @return The parameters of the command.
+	 */
 	public Map<String, String> getParams() {
 		return params;
 	}
 
+	/**
+	 * Gets the flags of the command.
+	 * @return The flags of the command.
+	 */
 	public Map<String, Boolean> getFlags() {
 		return flags;
 	}

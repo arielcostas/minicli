@@ -9,6 +9,9 @@ import dev.costas.minicli.models.Invocation;
  * @since 1.0.0
  */
 public final class DefaultArgumentParser implements ArgumentParser {
+	/**
+	 * Creates a new instance of the default argument parser.
+	 */
 	public DefaultArgumentParser() {
 	}
 

@@ -31,6 +31,15 @@ public class MinicliApplication {
 
 	private static final List<String> forbiddenCommands = List.of("help", "quit", "h", "q", "exit");
 
+	/**
+	 * Creates a new instance of the application.
+	 * @param argumentParser The argument parser to use.
+	 * @param commandExecutor The command executor to use.
+	 * @param helpGenerator The help generator to use.
+	 * @param outputStream The output stream to use.
+	 * @param application The application parameters.
+	 * @param instantiator The instantiator to use.
+	 */
 	protected MinicliApplication(ArgumentParser argumentParser, CommandExecutor commandExecutor, HelpGenerator helpGenerator, OutputStream outputStream, ApplicationParams application, Instantiator instantiator) {
 		this.argumentParser = argumentParser;
 		this.commandExecutor = commandExecutor;
@@ -40,6 +49,10 @@ public class MinicliApplication {
 		this.instantiator = instantiator;
 	}
 
+	/**
+	 * Gets an instance of the application builder.
+	 * @return An instance of the application builder.
+	 */
 	public static MinicliApplicationBuilder builder() {
 		return new MinicliApplicationBuilder();
 	}
@@ -49,6 +62,8 @@ public class MinicliApplication {
 	 *
 	 * @param clazz The package to scan for commands. It also scans subpackages.
 	 * @param args  The arguments to pass to the command.
+	 * @throws QuitException If the user wants to quit the application.
+	 * @throws IllegalAccessException If the command class cannot be instantiated.
 	 */
 	public void run(Class<?> clazz, String[] args) throws QuitException, IllegalAccessException {
 		var classes = getCommands(clazz.getPackageName());

@@ -25,6 +25,8 @@ public @interface Flag {
 	 * The name of the flag. This is the name that will be used to set the flag.
 	 * <p>
 	 * For example, if the name is {@code verbose}, the flag can be set using {@code --verbose}.
+	 *
+	 * @return The name of the flag.
 	 */
 	String name();
 
@@ -32,16 +34,22 @@ public @interface Flag {
 	 * The short name of the flag. This is an optional abbreviation of the flag name, and should be a single character.
 	 * <p>
 	 * For example, if the short name is {@code v}, the flag can be set using {@code -v}.
+	 *
+	 * @return The short name of the flag.
 	 */
 	String shortName();
 
 	/**
 	 * A description of the flag. This is used to generate the help message.
+	 *
+	 * @return The description of the flag.
 	 */
 	String description();
 
 	/**
 	 * The default value of the flag. This is the value that will be used if the flag is not set.
+	 *
+	 * @return The default value of the flag.
 	 */
 	boolean defaultValue() default false;
 }

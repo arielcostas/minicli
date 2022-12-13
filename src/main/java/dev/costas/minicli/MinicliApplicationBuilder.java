@@ -41,6 +41,7 @@ public class MinicliApplicationBuilder {
 	 * Sets the application parameters used to provide help messages.
 	 *
 	 * @param application the application parameters
+	 * @return This builder with the application parameters set
 	 */
 	public MinicliApplicationBuilder withApplicationParams(ApplicationParams application) {
 		this.applicationParams = application;

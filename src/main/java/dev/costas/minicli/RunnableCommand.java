@@ -7,5 +7,9 @@ import dev.costas.minicli.models.CommandOutput;
  * interface, it will be ignored.
  */
 public interface RunnableCommand {
+	/**
+	 * Invokes the command.
+	 * @return The output of the command.
+	 */
 	CommandOutput run();
 }
