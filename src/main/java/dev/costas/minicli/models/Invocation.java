@@ -85,4 +85,12 @@ public class Invocation {
 	public void putParameter(String key, String value) {
 		params.put(key, value);
 	}
+
+	public Map<String, String> getParams() {
+		return params;
+	}
+
+	public Map<String, Boolean> getFlags() {
+		return flags;
+	}
 }

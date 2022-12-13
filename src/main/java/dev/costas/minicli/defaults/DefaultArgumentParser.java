@@ -45,8 +45,8 @@ public final class DefaultArgumentParser implements ArgumentParser {
 
 		var normalizedValue = value.toLowerCase().trim();
 
-		if (value.startsWith("-") || value.startsWith("--")) {
-			// If the next thing is an argument, then the current argument is a flag and is true for being present
+		if (value.startsWith("-") || value.startsWith("--") || value.equals("")) {
+			// If the next thing is an argument or is nothing, then the current argument is a flag and is true for being present
 			invocation.putFlag(key, true);
 		} else if (normalizedValue.equals("true")) {
 			// If the next thing is "true", then the current argument is a flag and must be set to true
