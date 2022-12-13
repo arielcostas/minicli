@@ -1,9 +1,7 @@
 package dev.costas.minicli.framework;
 
 import dev.costas.minicli.RunnableCommand;
-import dev.costas.minicli.models.Invocation;
-
-import java.io.OutputStream;
+import dev.costas.minicli.models.CommandOutput;
 
 /**
  * Receives a class and an invocation and executes the command by injecting the parameters and flags, and calling the run method.
@@ -14,11 +12,10 @@ public interface CommandExecutor {
 	/**
 	 * Executes the command by injecting the parameters and flags, and calling the run method.
 	 * <p>
-	 * The output of the command is printed to the standard output.
+	 * The output of the command is returned.
 	 *
 	 * @param instance The command instance.
-	 * @param args The invocation of the command.
-	 * @param out The OutputStream to print the output of the command.
+	 * @return The output of the command.
 	 */
-	void execute(RunnableCommand instance, Invocation args, OutputStream out);
+	CommandOutput execute(RunnableCommand instance);
 }

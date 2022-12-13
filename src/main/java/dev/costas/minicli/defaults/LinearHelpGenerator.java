@@ -5,9 +5,8 @@ import dev.costas.minicli.annotation.Flag;
 import dev.costas.minicli.annotation.Parameter;
 import dev.costas.minicli.framework.HelpGenerator;
 import dev.costas.minicli.models.ApplicationParams;
+import dev.costas.minicli.models.CommandOutput;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -23,67 +22,69 @@ public final class LinearHelpGenerator implements HelpGenerator {
 	private static final String SPACES = " ".repeat(4);
 	private static final String SEPARATOR = " - ";
 
-	public void show(ApplicationParams application, List<Class<?>> classes, OutputStream os) {
-		var ps = new PrintStream(os);
-		ps.println("\nUsage: <command> [options] [arguments]");
-		ps.println("===== Help =====");
+	public CommandOutput show(ApplicationParams application, List<Class<?>> classes) {
+		var sb = new StringBuilder();
+		sb.append("\nUsage: <command> [options] [arguments]").append("\n");
+		sb.append("===== Help =====").append("\n");
 
 		for (var clazz : classes) {
-			ps.println();
-			this.showCommand(clazz, os);
+			sb.append("\n").append(this.showCommand(clazz));
 		}
 
-		ps.println();
-		ps.println(SPACES + "h, help" + SEPARATOR + "Shows this help");
-		ps.println(SPACES + "q, quit, exit" + SEPARATOR + "Exits the program");
+		sb
+			.append("\n")
+			.append(SPACES + "h, help" + SEPARATOR + "Shows this help").append("\n")
+			.append(SPACES + "q, quit" + SEPARATOR + "Quits the application").append("\n");
+
+		return new CommandOutput(true, sb.toString());
 	}
 
 	@Override
-	public void show(ApplicationParams application, Class<?> clazz, OutputStream os) {
-		this.showCommand(clazz, os);
+	public CommandOutput show(ApplicationParams application, Class<?> clazz) {
+		return new CommandOutput(false, this.showCommand(clazz));
 	}
 
-	private void showCommand(Class<?> clazz, OutputStream os) {
-		var ps = new PrintStream(os);
-
+	private String showCommand(Class<?> clazz) {
 		var commandAnnotation = clazz.getAnnotation(Command.class);
 		var parameters = this.getParameters(clazz);
 		var flags = this.getFlags(clazz);
 
-		printCommandName(commandAnnotation.name(), commandAnnotation.shortname(), commandAnnotation.description(), ps);
-		printFlags(flags, ps);
-		printParameters( parameters, ps);
-	}
-
-	private void printCommandName(String name, String shortName, String description, PrintStream ps) {
-		var l = new StringBuilder(SPACES);
-		l.append(name);
-		if (!shortName.isEmpty()) {
-			l.append(", ").append(shortName);
+		var sb = new StringBuilder(SPACES);
+		sb.append(commandAnnotation.name());
+		if (!commandAnnotation.shortname().isEmpty()) {
+			sb.append(", ").append(commandAnnotation.shortname());
 		}
-		l.append(SEPARATOR).append(description);
-		ps.println(l);
+		sb.append(SEPARATOR).append(commandAnnotation.description());
+
+		sb.append(printFlags(flags));
+		sb.append(printParameters(parameters));
+
+		return sb.toString();
 	}
 
-	private void printFlags(List<Flag> flags, PrintStream ps) {
+	private String printFlags(List<Flag> flags) {
+		var sb = new StringBuilder();
 		if (flags.size() > 0) {
-			ps.println(SPACES.repeat(2) + "Flags:");
+			sb.append(SPACES.repeat(2) + "Flags:").append("\n");
 			for (var flag : flags) {
-				printOption(flag.name(), flag.shortName(), flag.description(), ps);
+				sb.append(printOption(flag.name(), flag.shortName(), flag.description())).append("\n");
 			}
 		}
+		return sb.toString();
 	}
 
-	private void printParameters(List<Parameter> parameters, PrintStream ps) {
+	private String printParameters(List<Parameter> parameters) {
+		var sb = new StringBuilder();
 		if (parameters.size() > 0) {
-			ps.println(SPACES.repeat(2) + "Parameters:");
+			sb.append(SPACES.repeat(2) + "Parameters:").append("\n");
 			for (var parameter : parameters) {
-				printOption(parameter.name(), parameter.shortName(), parameter.description(), ps);
+				sb.append(printOption(parameter.name(), parameter.shortName(), parameter.description())).append("\n");
 			}
 		}
+		return sb.toString();
 	}
 
-	private void printOption(String name, String shortName, String description, PrintStream ps) {
+	private String printOption(String name, String shortName, String description) {
 		var line = new StringBuilder(SPACES.repeat(3));
 		if (!shortName.equals("")) {
 			line.append("-").append(shortName).append(", ");
@@ -91,7 +92,7 @@ public final class LinearHelpGenerator implements HelpGenerator {
 		line.append("--").append(name);
 		line.append(SPACES).append(description);
 
-		ps.println(line);
+		return line.toString();
 	}
 
 	private <T extends Annotation> List<T> getArgs(Class<?> clazz, Class<T> type) {

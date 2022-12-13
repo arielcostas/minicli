@@ -9,10 +9,10 @@ import dev.costas.minicli.framework.CommandExecutor;
 import dev.costas.minicli.framework.HelpGenerator;
 import dev.costas.minicli.framework.Instantiator;
 import dev.costas.minicli.models.ApplicationParams;
+import dev.costas.minicli.models.CommandOutput;
 import dev.costas.minicli.models.Invocation;
 import org.reflections.Reflections;
 
-import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -25,7 +25,6 @@ public class MinicliApplication {
 	private final ArgumentParser argumentParser;
 	private final CommandExecutor commandExecutor;
 	private final HelpGenerator helpGenerator;
-	private final OutputStream outputStream;
 	private final ApplicationParams application;
 	private final Instantiator instantiator;
 
@@ -36,15 +35,13 @@ public class MinicliApplication {
 	 * @param argumentParser The argument parser to use.
 	 * @param commandExecutor The command executor to use.
 	 * @param helpGenerator The help generator to use.
-	 * @param outputStream The output stream to use.
 	 * @param application The application parameters.
 	 * @param instantiator The instantiator to use.
 	 */
-	protected MinicliApplication(ArgumentParser argumentParser, CommandExecutor commandExecutor, HelpGenerator helpGenerator, OutputStream outputStream, ApplicationParams application, Instantiator instantiator) {
+	protected MinicliApplication(ArgumentParser argumentParser, CommandExecutor commandExecutor, HelpGenerator helpGenerator, ApplicationParams application, Instantiator instantiator) {
 		this.argumentParser = argumentParser;
 		this.commandExecutor = commandExecutor;
 		this.helpGenerator = helpGenerator;
-		this.outputStream = outputStream;
 		this.application = application;
 		this.instantiator = instantiator;
 	}
@@ -62,19 +59,20 @@ public class MinicliApplication {
 	 *
 	 * @param clazz The package to scan for commands. It also scans subpackages.
 	 * @param args  The arguments to pass to the command.
-	 * @throws QuitException If the user wants to quit the application.
-	 * @throws IllegalAccessException If the command class cannot be instantiated.
+	 * @return The output of the command.
 	 */
-	public void run(Class<?> clazz, String[] args) throws QuitException, IllegalAccessException {
-		var classes = getCommands(clazz.getPackageName());
-		if (args.length == 0) {
-			this.helpGenerator.show(application, classes, outputStream);
-			return;
+	public CommandOutput run(Class<?> clazz, String[] args) {
+		try {
+			return actuallyRun(clazz, args);
+		} catch (Exception e) {
+			return new CommandOutput(false, e.getMessage());
 		}
+	}
 
-		if (args[0].equals("help")) {
-			this.helpGenerator.show(application, classes, outputStream);
-			return;
+	private CommandOutput actuallyRun(Class<?> clazz, String[] args) throws QuitException, IllegalAccessException {
+		var classes = getCommands(clazz.getPackageName());
+		if (args.length == 0 || args[0].equals("help")) {
+			return this.helpGenerator.show(application, classes);
 		}
 
 		if (args[0].equals("quit") || args[0].equals("q") || args[0].equals("exit")) {
@@ -99,13 +97,10 @@ public class MinicliApplication {
 				}
 
 				inflateInstance(instance, args);
-				var invocation = argumentParser.parse(args);
-				commandExecutor.execute((RunnableCommand) instance, invocation, outputStream);
+				return commandExecutor.execute((RunnableCommand) instance);
 			}
 			default -> throw new RuntimeException("Multiple commands with the same name found.");
-
 		}
-
 	}
 
 	/**
