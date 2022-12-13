@@ -3,6 +3,7 @@ package dev.costas.minicli;
 import dev.costas.minicli.annotation.Command;
 import dev.costas.minicli.annotation.Flag;
 import dev.costas.minicli.annotation.Parameter;
+import dev.costas.minicli.exceptions.HelpException;
 import dev.costas.minicli.exceptions.QuitException;
 import dev.costas.minicli.framework.ArgumentParser;
 import dev.costas.minicli.framework.CommandExecutor;
@@ -28,15 +29,14 @@ public class MinicliApplication {
 	private final ApplicationParams application;
 	private final Instantiator instantiator;
 
-	private static final List<String> forbiddenCommands = List.of("help", "quit", "h", "q", "exit");
-
 	/**
 	 * Creates a new instance of the application.
-	 * @param argumentParser The argument parser to use.
+	 *
+	 * @param argumentParser  The argument parser to use.
 	 * @param commandExecutor The command executor to use.
-	 * @param helpGenerator The help generator to use.
-	 * @param application The application parameters.
-	 * @param instantiator The instantiator to use.
+	 * @param helpGenerator   The help generator to use.
+	 * @param application     The application parameters.
+	 * @param instantiator    The instantiator to use.
 	 */
 	protected MinicliApplication(ArgumentParser argumentParser, CommandExecutor commandExecutor, HelpGenerator helpGenerator, ApplicationParams application, Instantiator instantiator) {
 		this.argumentParser = argumentParser;
@@ -48,6 +48,7 @@ public class MinicliApplication {
 
 	/**
 	 * Gets an instance of the application builder.
+	 *
 	 * @return An instance of the application builder.
 	 */
 	public static MinicliApplicationBuilder builder() {
@@ -61,10 +62,10 @@ public class MinicliApplication {
 	 * @param args  The arguments to pass to the command.
 	 * @return The output of the command.
 	 */
-	public CommandOutput run(Class<?> clazz, String[] args) {
+	public CommandOutput run(Class<?> clazz, String[] args) throws QuitException {
 		try {
 			return actuallyRun(clazz, args);
-		} catch (Exception e) {
+		} catch (IllegalAccessException e) {
 			return new CommandOutput(false, e.getMessage());
 		}
 	}
@@ -79,13 +80,11 @@ public class MinicliApplication {
 			throw new QuitException();
 		}
 
-		var candidades = classes.stream()
-				.filter(c -> {
-					var name = c.getAnnotation(Command.class).name().toLowerCase();
-					var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
-					return name.equals(args[0]) || shortName.equals(args[0]);
-				})
-				.toList();
+		var candidades = classes.stream().filter(c -> {
+			var name = c.getAnnotation(Command.class).name().toLowerCase();
+			var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
+			return name.equals(args[0]) || shortName.equals(args[0]);
+		}).toList();
 
 		switch (candidades.size()) {
 			case 0 -> throw new RuntimeException("Command not found.");
@@ -96,7 +95,11 @@ public class MinicliApplication {
 					throw new RuntimeException("Command class must implement RunnableCommand");
 				}
 
-				inflateInstance(instance, args);
+				try {
+					inflateInstance(instance, args);
+				} catch (HelpException e) {
+					return this.helpGenerator.show(application, e.getClazz());
+				}
 				return commandExecutor.execute((RunnableCommand) instance);
 			}
 			default -> throw new RuntimeException("Multiple commands with the same name found.");
@@ -109,19 +112,39 @@ public class MinicliApplication {
 	 * @param instance The instance to inject the parameters and flags.
 	 * @param args     The arguments to parse.
 	 */
-	private void inflateInstance(Object instance, String[] args) throws IllegalAccessException, NumberFormatException {
+	private void inflateInstance(Object instance, String[] args) throws IllegalAccessException, NumberFormatException, HelpException {
 		var invocation = argumentParser.parse(args);
 		var clazz = instance.getClass();
+
+		if (invocation.getFlags().containsKey("help") || invocation.getFlags().containsKey("h")) {
+			throw new HelpException(clazz);
+		}
 
 		for (Field field : clazz.getDeclaredFields()) {
 			var flagAnnotation = field.getAnnotation(Flag.class);
 			if (flagAnnotation != null) {
+				if (flagAnnotation.name().equals("")) {
+					throw new RuntimeException("Flag name cannot be empty.");
+				}
+
+				if (flagAnnotation.name().equals("help")) {
+					throw new RuntimeException("Flag name cannot be 'help'.");
+				}
+
 				inflateFlag(field, instance, invocation);
 				continue; // Skip the parameter injection since flags cannot be parameters.
 			}
 
 			var parameterAnnotation = field.getAnnotation(Parameter.class);
 			if (parameterAnnotation != null) {
+				if (parameterAnnotation.name().equals("")) {
+					throw new RuntimeException("Parameter name cannot be empty.");
+				}
+
+				if (parameterAnnotation.name().equals("help") || parameterAnnotation.name().equals("h") || parameterAnnotation.shortName().equals("h")) {
+					throw new RuntimeException("Parameter name cannot be 'help'.");
+				}
+
 				inflateParameter(field, instance, invocation);
 			}
 		}
@@ -189,15 +212,13 @@ public class MinicliApplication {
 	 */
 	private List<Class<?>> getCommands(String prefix) {
 		var reflections = new Reflections(prefix);
-		return reflections
-				.getTypesAnnotatedWith(Command.class)
-				.stream()
-				.filter(c -> {
-					var name = c.getAnnotation(Command.class).name().toLowerCase();
-					var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
-					return !forbiddenCommands.contains(name) && !forbiddenCommands.contains(shortName);
-				})
-				.toList();
+		final List<String> forbiddenCommands = List.of("help", "quit", "h", "q", "exit");
+
+		return reflections.getTypesAnnotatedWith(Command.class).stream().filter(c -> {
+			var name = c.getAnnotation(Command.class).name().toLowerCase();
+			var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
+			return !forbiddenCommands.contains(name) && !forbiddenCommands.contains(shortName);
+		}).toList();
 	}
 
 }
