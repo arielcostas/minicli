@@ -58,7 +58,7 @@ public class Invocation {
 	 * @param str The string to be normalized.
 	 * @return The normalized string.
 	 */
-	private String normalize(String str) {
+	public static String normalize(String str) {
 		return str.toLowerCase().trim();
 	}
 
