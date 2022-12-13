@@ -1,11 +1,13 @@
 package dev.costas.minicli.processors;
 
+import dev.costas.minicli.RunnableCommand;
 import dev.costas.minicli.annotation.Flag;
 import dev.costas.minicli.annotation.OnInvoke;
 import dev.costas.minicli.annotation.Parameter;
 import dev.costas.minicli.models.CommandOutput;
 import dev.costas.minicli.models.Invocation;
 
+import java.io.PrintStream;
 import java.util.Arrays;
 
 /**
@@ -19,12 +21,11 @@ public class DefaultCommandExecutor implements CommandExecutor {
 	 * <p>
 	 * The output of the command is printed to the standard output.
 	 *
-	 * @param commandClass The class of the command to execute.
+	 * @param instance The command instance.
 	 * @param args The invocation of the command.
 	 */
-	public void execute(Class<?> commandClass, Invocation args) {
+	public void execute(RunnableCommand instance, Invocation args, PrintStream out) {
 		try {
-			var instance = commandClass.getDeclaredConstructor().newInstance();
 			var fields = instance.getClass().getDeclaredFields();
 			for (var field : fields) {
 				var annotations = field.getAnnotations();
@@ -58,17 +59,8 @@ public class DefaultCommandExecutor implements CommandExecutor {
 				}
 			}
 
-			var method = Arrays
-					.stream(commandClass.getMethods())
-					.filter(m -> m.getAnnotation(OnInvoke.class) != null)
-					.filter(m -> m.getReturnType() == CommandOutput.class)
-					.findFirst();
-
-			if (method.isEmpty()) {
-				throw new RuntimeException("No method annotated with @OnInvoke found.");
-			}
-			var result = (CommandOutput) method.get().invoke(instance);
-			System.out.println(result.output());
+			var result = instance.run();
+			out.println(result.output());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

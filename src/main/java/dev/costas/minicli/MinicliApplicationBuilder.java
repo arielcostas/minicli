@@ -16,6 +16,7 @@ public class MinicliApplicationBuilder {
 	private HelpGenerator helpGenerator;
 	private OutputStream outputStream;
 	private ApplicationParams applicationParams;
+	private Instantiator instantiator;
 
 	/**
 	 * Creates a new builder with the default values.
@@ -26,6 +27,7 @@ public class MinicliApplicationBuilder {
 		this.helpGenerator = new LinearHelpGenerator();
 		this.applicationParams = null;
 		this.outputStream = System.out;
+		this.instantiator = new DefaultInstantiator();
 	}
 
 	/**
@@ -79,10 +81,20 @@ public class MinicliApplicationBuilder {
 	}
 
 	/**
+	 * Sets the instantiator to use.
+	 * @param instantiator The instantiator to use.
+	 * @return This builder with the instantiator set.
+	 */
+	public MinicliApplicationBuilder withInstantiator(Instantiator instantiator) {
+		this.instantiator = instantiator;
+		return this;
+	}
+
+	/**
 	 * Builds the {@link MinicliApplication}.
 	 * @return The {@link MinicliApplication}.
 	 */
 	public MinicliApplication build() {
-		return new MinicliApplication(argumentParser, commandExecutor, helpGenerator, outputStream, applicationParams);
+		return new MinicliApplication(argumentParser, commandExecutor, helpGenerator, outputStream, applicationParams, instantiator);
 	}
 }

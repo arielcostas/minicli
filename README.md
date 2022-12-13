@@ -111,6 +111,27 @@ The `MinicliApplication` class is used to run the application. It takes an array
 should be the command-line arguments passed to the application. The `run` method will then parse the arguments and
 execute the appropriate command.
 
+If you want to use this framework along with Guice or another dependency injection framework, you must replace the
+Instantiator class with your own implementation. This is done by calling the `withInstantiator` method on the
+`MinicliApplicationBuilder` class. For example:
+
+```java
+import dev.costas.minicli.Instantiator;
+
+public class GuiceInstantiator implements Instantiator {
+	private final Injector injector;
+	
+	public GuiceInstantiator(Injector injector) {
+		this.injector = injector;
+	}
+	
+    @Override
+    public <T> T instantiate(Class<T> clazz) {
+        return injector.getInstance(clazz);
+    }
+}
+```
+
 ## Versioning
 
 Minicli uses [Semantic Versioning](https://semver.org/). The version number is in the format `MAJOR.MINOR.PATCH`, where

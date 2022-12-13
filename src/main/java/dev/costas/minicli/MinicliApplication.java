@@ -6,6 +6,7 @@ import dev.costas.minicli.processors.*;
 import org.reflections.Reflections;
 
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -19,13 +20,15 @@ public class MinicliApplication {
 	private final HelpGenerator helpGenerator;
 	private final OutputStream outputStream;
 	private final ApplicationParams application;
+	private final Instantiator instantiator;
 
-	protected MinicliApplication(ArgumentParser argumentParser, CommandExecutor commandExecutor, HelpGenerator helpGenerator, OutputStream outputStream, ApplicationParams application) {
+	protected MinicliApplication(ArgumentParser argumentParser, CommandExecutor commandExecutor, HelpGenerator helpGenerator, OutputStream outputStream, ApplicationParams application, Instantiator instantiator) {
 		this.argumentParser = argumentParser;
 		this.commandExecutor = commandExecutor;
 		this.helpGenerator = helpGenerator;
 		this.outputStream = outputStream;
 		this.application = application;
+		this.instantiator = instantiator;
 	}
 
 	public static MinicliApplicationBuilder builder() {
@@ -59,7 +62,11 @@ public class MinicliApplication {
 		if (commandClass.isEmpty()) {
 			this.helpGenerator.show(application, classes, outputStream);
 		} else {
-			commandExecutor.execute(commandClass.get(), invocation);
+			var instance = instantiator.getInstance(commandClass.get());
+			if (!(instance instanceof RunnableCommand)) {
+				throw new RuntimeException("Command class must implement RunnableCommand");
+			}
+			commandExecutor.execute((RunnableCommand) instance, invocation, new PrintStream(outputStream));
 		}
 	}
 
@@ -68,7 +75,7 @@ public class MinicliApplication {
 	 *
 	 * @param prefix The package to scan for commands.
 	 */
-	protected List<Class<?>> getCommands(String prefix) {
+	private List<Class<?>> getCommands(String prefix) {
 		var reflections = new Reflections(prefix);
 		return reflections.getTypesAnnotatedWith(Command.class).stream().toList();
 	}
