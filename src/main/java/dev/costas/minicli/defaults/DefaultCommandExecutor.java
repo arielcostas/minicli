@@ -6,6 +6,7 @@ import dev.costas.minicli.annotation.Parameter;
 import dev.costas.minicli.framework.CommandExecutor;
 import dev.costas.minicli.models.Invocation;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 
@@ -23,12 +24,13 @@ public final class DefaultCommandExecutor implements CommandExecutor {
 	 * @param instance The command instance.
 	 * @param args     The invocation of the command.
 	 */
-	public void execute(RunnableCommand instance, Invocation args, PrintStream out) {
+	public void execute(RunnableCommand instance, Invocation args, OutputStream out) {
+		var ps = new PrintStream(out);
 		try {
 			injectArguments(instance, args);
 
 			var result = instance.run();
-			out.println(result.output());
+			ps.println(result.output());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

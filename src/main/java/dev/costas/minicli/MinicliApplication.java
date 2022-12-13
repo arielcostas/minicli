@@ -2,12 +2,14 @@ package dev.costas.minicli;
 
 import dev.costas.minicli.annotation.Command;
 import dev.costas.minicli.exceptions.QuitException;
+import dev.costas.minicli.framework.ArgumentParser;
+import dev.costas.minicli.framework.CommandExecutor;
+import dev.costas.minicli.framework.HelpGenerator;
+import dev.costas.minicli.framework.Instantiator;
 import dev.costas.minicli.models.ApplicationParams;
-import dev.costas.minicli.framework.*;
 import org.reflections.Reflections;
 
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -74,7 +76,7 @@ public class MinicliApplication {
 			if (!(instance instanceof RunnableCommand)) {
 				throw new RuntimeException("Command class must implement RunnableCommand");
 			}
-			commandExecutor.execute((RunnableCommand) instance, invocation, new PrintStream(outputStream));
+			commandExecutor.execute((RunnableCommand) instance, invocation, outputStream);
 		}
 	}
 
