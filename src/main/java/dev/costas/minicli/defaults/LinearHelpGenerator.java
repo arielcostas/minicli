@@ -8,9 +8,9 @@ import dev.costas.minicli.models.ApplicationParams;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -94,19 +94,19 @@ public final class LinearHelpGenerator implements HelpGenerator {
 		ps.println(line);
 	}
 
-	private List<Parameter> getParameters(Class<?> clazz) {
+	private <T extends Annotation> List<T> getArgs(Class<?> clazz, Class<T> type) {
 		return Arrays.stream(clazz.getDeclaredFields())
-				.filter(f -> f.isAnnotationPresent(Parameter.class))
-				.sorted(Comparator.comparing(Field::getName))
-				.map(f -> f.getAnnotation(Parameter.class))
-				.toList();
+			.filter(f -> f.isAnnotationPresent(type))
+			.sorted(Comparator.comparing(Field::getName))
+			.map(f -> f.getAnnotation(type))
+			.toList();
+	}
+
+	private List<Parameter> getParameters(Class<?> clazz) {
+		return this.getArgs(clazz, Parameter.class);
 	}
 
 	private List<Flag> getFlags(Class<?> clazz) {
-		return Arrays.stream(clazz.getDeclaredFields())
-				.filter(f -> f.isAnnotationPresent(Flag.class))
-				.sorted(Comparator.comparing(Field::getName))
-				.map(f -> f.getAnnotation(Flag.class))
-				.toList();
+		return this.getArgs(clazz, Flag.class);
 	}
 }
