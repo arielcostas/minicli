@@ -32,31 +32,31 @@ public final class DefaultArgumentParser implements ArgumentParser {
 				continue;
 			}
 
-			var key = arg.startsWith("--") ? arg.substring(2) : arg.substring(1);
-			key = Invocation.normalize(key);
+			var next = i + 1 < args.length ? args[i + 1].toLowerCase() : "";
 
-			String value;
-			if (args.length > i+1) {
-				value = args[i + 1];
-			} else {
-				value = "";
-			}
-
-			var normalizedValue = value.toLowerCase().trim();
-
-			if (value.startsWith("-") || value.startsWith("--")) {
-				invocation.putFlag(key, true);
-			} else if (normalizedValue.equals("true")) {
-				invocation.putFlag(key, true);
-				i++;
-			} else if (normalizedValue.equals("false")) {
-				invocation.putFlag(key, false);
-				i++;
-			} else {
-				invocation.putParameter(key, value);
-				i++;
-			}
+			parseArg(arg, next, invocation);
 		}
 		return invocation;
+	}
+
+	private void parseArg(String arg, String value, Invocation invocation) {
+		var key = arg.startsWith("--") ? arg.substring(2) : arg.substring(1);
+		key = Invocation.normalize(key);
+
+		var normalizedValue = value.toLowerCase().trim();
+
+		if (value.startsWith("-") || value.startsWith("--")) {
+			// If the next thing is an argument, then the current argument is a flag and is true for being present
+			invocation.putFlag(key, true);
+		} else if (normalizedValue.equals("true")) {
+			// If the next thing is "true", then the current argument is a flag and must be set to true
+			invocation.putFlag(key, true);
+		} else if (normalizedValue.equals("false")) {
+			// If the next thing is "false", then the current argument is a flag and must be set to false
+			invocation.putFlag(key, false);
+		} else {
+			// If neither, then the current argument is a parameter and the next thing is its value
+			invocation.putParameter(key, value);
+		}
 	}
 }
