@@ -18,12 +18,12 @@ import java.util.List;
  * @since 1.0.0
  */
 public class LinearHelpGenerator implements HelpGenerator {
-	public static final String SPACES = " ".repeat(4);
-	public static final String SEPARATOR = " - ";
+	private static final String SPACES = " ".repeat(4);
+	private static final String SEPARATOR = " - ";
 
 	public void show(ApplicationParams application, List<Class<?>> classes, OutputStream os) {
 		var ps = new PrintStream(os);
-		ps.println("Usage: <command> [options] [arguments]");
+		ps.println("\nUsage: <command> [options] [arguments]");
 		ps.println("===== Help =====");
 
 		for (var clazz : classes) {
@@ -40,17 +40,23 @@ public class LinearHelpGenerator implements HelpGenerator {
 			l.append(SEPARATOR).append(command.description());
 			ps.println(l);
 
-			ps.println(SPACES.repeat(2) + "Parameters:");
-			for (var parameter : parameters) {
-				printOption(parameter.name(), parameter.shortName(), parameter.description(), ps);
+			if (parameters.size() > 0) {
+				ps.println(SPACES.repeat(2) + "Parameters:");
+				for (var parameter : parameters) {
+					printOption(parameter.name(), parameter.shortName(), parameter.description(), ps);
+				}
 			}
-			ps.println(SPACES.repeat(2) + "Flags:");
-			for (var flag : flags) {
-				printOption(flag.name(), flag.shortName(), flag.description(), ps);
+
+			if (flags.size() > 0) {
+				ps.println(SPACES.repeat(2) + "Flags:");
+				for (var flag : flags) {
+					printOption(flag.name(), flag.shortName(), flag.description(), ps);
+				}
 			}
 		}
 		ps.println();
-		ps.println(SPACES + "help" + SEPARATOR + "Shows this help");
+		ps.println(SPACES + "h, help" + SEPARATOR + "Shows this help");
+		ps.println(SPACES + "q, quit, exit" + SEPARATOR + "Exits the program");
 	}
 
 	private void printOption(String name, String shortName, String description, PrintStream ps) {
