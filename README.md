@@ -2,9 +2,9 @@
 
 A Java framework for easily building command-line applications using annotations.
 
-![GitHub](https://img.shields.io/github/license/arielcostas/minicli?color=blue&style=for-the-badge)
-![Maven Central](https://img.shields.io/maven-central/v/dev.costas/minicli?style=for-the-badge)
-![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/arielcostas/minicli?label=Codeclimate&style=for-the-badge)
+[![GitHub](https://img.shields.io/github/license/arielcostas/minicli?color=blue&style=for-the-badge)](https://github.com/arielcostas/minicli/blob/main/LICENCE)
+[![Maven Central](https://img.shields.io/maven-central/v/dev.costas/minicli?style=for-the-badge)](https://search.maven.org/artifact/dev.costas/minicli)
+[![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/arielcostas/minicli?label=Codeclimate&style=for-the-badge)](https://codeclimate.com/github/arielcostas/minicli/maintainability)
 [![javadoc](https://javadoc.io/badge2/dev.costas/minicli/javadoc.svg?style=for-the-badge)](https://javadoc.io/doc/dev.costas/minicli)
 
 Minicli (the "cli" is pronounced "clee") is a command-line application framework for Java. It provides a simple way to
