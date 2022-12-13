@@ -1,6 +1,7 @@
 package dev.costas.minicli;
 
 import dev.costas.minicli.annotation.Command;
+import dev.costas.minicli.exceptions.QuitException;
 import dev.costas.minicli.models.ApplicationParams;
 import dev.costas.minicli.processors.*;
 import org.reflections.Reflections;
@@ -22,6 +23,8 @@ public class MinicliApplication {
 	private final ApplicationParams application;
 	private final Instantiator instantiator;
 
+	private static final List<String> forbiddenCommands = List.of("help", "quit", "h", "q", "exit");
+
 	protected MinicliApplication(ArgumentParser argumentParser, CommandExecutor commandExecutor, HelpGenerator helpGenerator, OutputStream outputStream, ApplicationParams application, Instantiator instantiator) {
 		this.argumentParser = argumentParser;
 		this.commandExecutor = commandExecutor;
@@ -41,7 +44,7 @@ public class MinicliApplication {
 	 * @param clazz The package to scan for commands. It also scans subpackages.
 	 * @param args  The arguments to pass to the command.
 	 */
-	public void run(Class<?> clazz, String[] args) {
+	public void run(Class<?> clazz, String[] args) throws QuitException {
 		var classes = getCommands(clazz.getPackageName());
 
 		var invocation = argumentParser.parse(args);
@@ -49,6 +52,10 @@ public class MinicliApplication {
 		if (invocation.getCommand() == null || invocation.getCommand().isBlank() || invocation.getCommand().equals("help")) {
 			this.helpGenerator.show(application, classes, outputStream);
 			return;
+		}
+
+		if (invocation.getCommand().equals("quit") || invocation.getCommand().equals("exit")) {
+			throw new QuitException();
 		}
 
 		var commandClass = classes.stream()
@@ -60,6 +67,7 @@ public class MinicliApplication {
 				.findFirst();
 
 		if (commandClass.isEmpty()) {
+			// TODO: Show an error message or throw, since the command is not found because of the developer's mistake.
 			this.helpGenerator.show(application, classes, outputStream);
 		} else {
 			var instance = instantiator.getInstance(commandClass.get());
@@ -77,7 +85,15 @@ public class MinicliApplication {
 	 */
 	private List<Class<?>> getCommands(String prefix) {
 		var reflections = new Reflections(prefix);
-		return reflections.getTypesAnnotatedWith(Command.class).stream().toList();
+		return reflections
+				.getTypesAnnotatedWith(Command.class)
+				.stream()
+				.filter(c -> {
+					var name = c.getAnnotation(Command.class).name().toLowerCase();
+					var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
+					return !forbiddenCommands.contains(name) && !forbiddenCommands.contains(shortName);
+				})
+				.toList();
 	}
 
 }
