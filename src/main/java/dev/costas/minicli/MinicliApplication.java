@@ -72,8 +72,12 @@ public class MinicliApplication {
 
 	private CommandOutput actuallyRun(Class<?> clazz, String[] args) throws QuitException, IllegalAccessException {
 		var classes = getCommands(clazz.getPackageName());
-		if (args.length == 0 || args[0].equals("help")) {
+		if (args.length == 0 ) {
 			return this.helpGenerator.show(application, classes);
+		}
+
+		if (args[0].equals("v") || args[0].equals("version")) {
+			return new CommandOutput(true, application.formatted());
 		}
 
 		if (args[0].equals("quit") || args[0].equals("q") || args[0].equals("exit")) {
@@ -85,6 +89,13 @@ public class MinicliApplication {
 			var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
 			return name.equals(args[0]) || shortName.equals(args[0]);
 		}).toList();
+
+		if (args[0].equals("h") || args[0].equals("help")) {
+			if (args.length == 1) {
+				return this.helpGenerator.show(application, candidades.get(0));
+			}
+			return this.helpGenerator.show(application, classes);
+		}
 
 		switch (candidades.size()) {
 			case 0 -> throw new RuntimeException("Command not found.");
@@ -212,7 +223,7 @@ public class MinicliApplication {
 	 */
 	private List<Class<?>> getCommands(String prefix) {
 		var reflections = new Reflections(prefix);
-		final List<String> forbiddenCommands = List.of("help", "quit", "h", "q", "exit");
+		final List<String> forbiddenCommands = List.of("h", "help", "q", "quit", "exit", "v", "version");
 
 		return reflections.getTypesAnnotatedWith(Command.class).stream().filter(c -> {
 			var name = c.getAnnotation(Command.class).name().toLowerCase();

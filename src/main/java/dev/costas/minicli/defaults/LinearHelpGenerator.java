@@ -24,8 +24,8 @@ public final class LinearHelpGenerator implements HelpGenerator {
 
 	public CommandOutput show(ApplicationParams application, List<Class<?>> classes) {
 		var sb = new StringBuilder();
-		sb.append("\nUsage: <command> [options] [arguments]").append("\n");
-		sb.append("===== Help =====").append("\n");
+		sb.append("\nUsage: ").append(application.executable()).append(" [command] [options]\n");
+		sb.append("===== Available commands =====").append("\n");
 
 		for (var clazz : classes) {
 			sb.append("\n").append(this.showCommand(clazz));
@@ -33,8 +33,11 @@ public final class LinearHelpGenerator implements HelpGenerator {
 
 		sb
 			.append("\n")
-			.append(SPACES + "h, help" + SEPARATOR + "Shows this help").append("\n")
-			.append(SPACES + "q, quit" + SEPARATOR + "Quits the application").append("\n");
+			.append(SPACES).append("h, help").append(SEPARATOR).append("Shows this help").append("\n")
+			.append(SPACES).append("q, quit").append(SEPARATOR).append("Quits the application").append("\n")
+			.append(SPACES).append("v, version").append(SEPARATOR).append("Shows the application version").append("\n")
+			.append("\n")
+			.append(application.name()).append(" ").append(application.version()).append("\n");
 
 		return new CommandOutput(true, sb.toString());
 	}
@@ -65,7 +68,7 @@ public final class LinearHelpGenerator implements HelpGenerator {
 	private String printFlags(List<Flag> flags) {
 		var sb = new StringBuilder();
 		if (flags.size() > 0) {
-			sb.append(SPACES.repeat(2) + "Flags:").append("\n");
+			sb.append(SPACES.repeat(2)).append("Flags:").append("\n");
 			for (var flag : flags) {
 				sb.append(printOption(flag.name(), flag.shortName(), flag.description())).append("\n");
 			}
@@ -76,7 +79,7 @@ public final class LinearHelpGenerator implements HelpGenerator {
 	private String printParameters(List<Parameter> parameters) {
 		var sb = new StringBuilder();
 		if (parameters.size() > 0) {
-			sb.append(SPACES.repeat(2) + "Parameters:").append("\n");
+			sb.append(SPACES.repeat(2)).append("Parameters:").append("\n");
 			for (var parameter : parameters) {
 				sb.append(printOption(parameter.name(), parameter.shortName(), parameter.description())).append("\n");
 			}
