@@ -44,9 +44,12 @@ and
 import dev.costas.minicli.models.CommandOutput;
 
 @Command(name = "greet", description = "Prints a greeting")
-public class GreetCommand {
-	@Argument(name = "name", shortname = "n", description = "The name of the person to greet")
+public class GreetCommand implements RunnableCommand {
+	@Parameter(name = "name", shortname = "n", description = "The name of the person to greet")
 	private String name;
+	
+	@Parameter(name = "age", description = "The age of the greeted person")
+	private int personAge;
 
 	@Flag(name = "formal", description = "Whether to use a formal greeting")
 	private boolean formal;
@@ -54,9 +57,9 @@ public class GreetCommand {
 	@OnInvoke
 	public CommandOutput run() {
 		if (formal) {
-			return new CommandOutput("Good day, " + name);
+			return new CommandOutput("Good day, " + name + ". You're " + personAge + " years young.");
 		} else {
-			return new CommandOutput("Hey, " + name);
+			return new CommandOutput("Hey, " + name + ". You're " + personAge + " years young.");
 		}
 	}
 }
@@ -65,8 +68,8 @@ public class GreetCommand {
 This command can then be run from the command-line using the following command:
 
 ```bash
-$ java -jar myapp.jar greet -n Ariel --formal
-Good day, Ariel
+$ java -jar myapp.jar greet -n Ariel --formal --age 19
+Good day, Ariel. You're 19 years young.
 ```
 
 Note that, as for now, arguments may only be strings and flags may only be booleans. In the future, numbers and other
