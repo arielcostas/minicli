@@ -3,9 +3,9 @@ package dev.costas.minicli;
 import dev.costas.minicli.annotation.Command;
 import dev.costas.minicli.annotation.Flag;
 import dev.costas.minicli.annotation.Parameter;
+import dev.costas.minicli.defaults.ArgumentParser;
 import dev.costas.minicli.exceptions.HelpException;
 import dev.costas.minicli.exceptions.QuitException;
-import dev.costas.minicli.framework.ArgumentParser;
 import dev.costas.minicli.framework.CommandExecutor;
 import dev.costas.minicli.framework.HelpGenerator;
 import dev.costas.minicli.framework.Instantiator;
@@ -23,7 +23,6 @@ import java.util.List;
  * @since 1.0.0
  */
 public class MinicliApplication {
-	private final ArgumentParser argumentParser;
 	private final CommandExecutor commandExecutor;
 	private final HelpGenerator helpGenerator;
 	private final ApplicationParams application;
@@ -32,14 +31,12 @@ public class MinicliApplication {
 	/**
 	 * Creates a new instance of the application.
 	 *
-	 * @param argumentParser  The argument parser to use.
 	 * @param commandExecutor The command executor to use.
 	 * @param helpGenerator   The help generator to use.
 	 * @param application     The application parameters.
 	 * @param instantiator    The instantiator to use.
 	 */
-	protected MinicliApplication(ArgumentParser argumentParser, CommandExecutor commandExecutor, HelpGenerator helpGenerator, ApplicationParams application, Instantiator instantiator) {
-		this.argumentParser = argumentParser;
+	protected MinicliApplication(CommandExecutor commandExecutor, HelpGenerator helpGenerator, ApplicationParams application, Instantiator instantiator) {
 		this.commandExecutor = commandExecutor;
 		this.helpGenerator = helpGenerator;
 		this.application = application;
@@ -124,6 +121,7 @@ public class MinicliApplication {
 	 * @param args     The arguments to parse.
 	 */
 	private void inflateInstance(Object instance, String[] args) throws IllegalAccessException, NumberFormatException, HelpException {
+		ArgumentParser argumentParser = new ArgumentParser();
 		var invocation = argumentParser.parse(args);
 		var clazz = instance.getClass();
 

@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class DefaultArgumentParserTest {
+class ArgumentParserTest {
 	@Test
 	@DisplayName("Empty arguments")
 	void empty() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ });
 		Assertions.assertNull(invocation.getCommand());
@@ -19,7 +19,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command only")
 	void commandOnly() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof" });
 		Assertions.assertEquals("doof", invocation.getCommand());
@@ -30,7 +30,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and parameter")
 	void commandParameter() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "--param", "works" });
 
@@ -43,7 +43,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and short parameter")
 	void commandShortParameter() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "-p", "works" });
 
@@ -56,7 +56,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and two parameters")
 	void commandTwoParameters() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "--param", "works", "--param2", "works2" });
 
@@ -70,7 +70,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and two short parameters")
 	void commandTwoShortParameters() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "-p", "works", "-p2", "works2" });
 
@@ -84,7 +84,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and one long and one short parameter")
 	void commandOneLongOneShortParameter() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "--param", "works", "-p2", "works2" });
 
@@ -98,7 +98,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and short flag")
 	void commandShortFlag() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "-f" });
 
@@ -111,7 +111,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and flag with value")
 	void commandFlagWithValue() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "--flag", "false" });
 
@@ -124,7 +124,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and short flag with value")
 	void commandShortFlagWithValue() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "-f", "false" });
 
@@ -137,7 +137,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and multiple flags")
 	void commandMultipleFlags() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "-f", "false", "--flag", "true" });
 
@@ -151,7 +151,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and one flag with value and one without")
 	void commandOneFlagWithValueAndOneWithout() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "-f", "false", "--flag" });
 
@@ -165,7 +165,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and one flag and one parameter")
 	void commandOneFlagAndOneParameter() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "--flag", "--param", "works" });
 
@@ -179,7 +179,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and one parameter and one flag")
 	void commandOneParameterAndOneFlag() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "--param", "works", "--flag" });
 
@@ -193,7 +193,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and one parameter and one flag with value")
 	void commandOneParameterAndOneFlagWithValue() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "--param", "works", "--flag", "false" });
 
@@ -207,7 +207,7 @@ class DefaultArgumentParserTest {
 	@Test
 	@DisplayName("Command and one parameter and one flag with value and one flag without value")
 	void commandOneParameterAndOneFlagWithValueAndOneFlagWithoutValue() {
-		var parser = new DefaultArgumentParser();
+		var parser = new ArgumentParser();
 
 		var invocation = parser.parse(new String[]{ "doof", "--param", "works", "--flag", "false", "--flag2" });
 
