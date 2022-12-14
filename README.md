@@ -19,7 +19,7 @@ Minicli is available on Maven Central. To use it, add the following dependency t
 <dependency>
 	<groupId>dev.costas</groupId>
 	<artifactId>minicli</artifactId>
-	<version>1.0.0</version>
+	<version>2.0.0</version>
 </dependency>
 ```
 
@@ -28,7 +28,7 @@ If you're using Gradle, add the following dependency to your `build.gradle`:
 ```groovy
 dependencies {
 	/* ... */
-	implementation 'dev.costas:minicli:1.0.0'
+	implementation 'dev.costas:minicli:2.0.0'
 }
 ```
 
