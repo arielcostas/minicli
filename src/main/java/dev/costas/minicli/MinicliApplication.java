@@ -88,7 +88,7 @@ public class MinicliApplication {
 		}).toList();
 
 		if (args[0].equals("h") || args[0].equals("help")) {
-			if (args.length == 1) {
+			if (args.length == 2) {
 				return this.helpGenerator.show(application, candidades.get(0));
 			}
 			return this.helpGenerator.show(application, classes);
