@@ -66,7 +66,7 @@ public final class LinearHelpGenerator implements HelpGenerator {
 	}
 
 	private String printFlags(List<Flag> flags) {
-		var sb = new StringBuilder();
+		var sb = new StringBuilder("\n");
 		if (flags.size() > 0) {
 			sb.append(SPACES.repeat(2)).append("Flags:").append("\n");
 			for (var flag : flags) {
@@ -77,7 +77,7 @@ public final class LinearHelpGenerator implements HelpGenerator {
 	}
 
 	private String printParameters(List<Parameter> parameters) {
-		var sb = new StringBuilder();
+		var sb = new StringBuilder("\n");
 		if (parameters.size() > 0) {
 			sb.append(SPACES.repeat(2)).append("Parameters:").append("\n");
 			for (var parameter : parameters) {
