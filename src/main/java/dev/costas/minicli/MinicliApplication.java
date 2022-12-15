@@ -81,14 +81,11 @@ public class MinicliApplication {
 			throw new QuitException();
 		}
 
-		var candidades = classes.stream().filter(c -> {
-			var name = c.getAnnotation(Command.class).name().toLowerCase();
-			var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
-			return name.equals(args[0]) || shortName.equals(args[0]);
-		}).toList();
+		var candidades = getCandidates(args[0], classes);
 
 		if (args[0].equals("h") || args[0].equals("help")) {
 			if (args.length == 2) {
+				candidades = getCandidates(args[1], classes);
 				return this.helpGenerator.show(application, candidades.get(0));
 			}
 			return this.helpGenerator.show(application, classes);
@@ -227,6 +224,17 @@ public class MinicliApplication {
 			var name = c.getAnnotation(Command.class).name().toLowerCase();
 			var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
 			return !forbiddenCommands.contains(name) && !forbiddenCommands.contains(shortName);
+		}).toList();
+	}
+
+	/**
+	 * Gets the command class that matches the given name.
+	 */
+	private List<Class<?>> getCandidates(String arg, List<Class<?>> classes) {
+		return classes.stream().filter(c -> {
+			var name = c.getAnnotation(Command.class).name().toLowerCase();
+			var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
+			return name.equals(arg) || shortName.equals(arg);
 		}).toList();
 	}
 
