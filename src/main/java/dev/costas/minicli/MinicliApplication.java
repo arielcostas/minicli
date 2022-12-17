@@ -178,7 +178,9 @@ public class MinicliApplication {
 			value = flag.defaultValue();
 		}
 
+		field.setAccessible(true);
 		field.set(instance, value);
+		field.setAccessible(false);
 	}
 
 	private void inflateParameter(Field field, Object instance, Invocation invocation) throws IllegalAccessException, NumberFormatException {
@@ -200,6 +202,7 @@ public class MinicliApplication {
 		}
 
 		// Try to parse the value to the correct type and set it to the field
+		field.setAccessible(true);
 		switch (field.getType().getName()) {
 			case "java.lang.String" -> field.set(instance, value);
 			case "int", "java.lang.Integer" -> field.set(instance, Integer.parseInt(value));
@@ -208,6 +211,7 @@ public class MinicliApplication {
 			case "double", "java.lang.Double" -> field.set(instance, Double.parseDouble(value));
 			default -> throw new RuntimeException("Unsupported parameter type " + field.getType().getName());
 		}
+		field.setAccessible(false);
 	}
 
 
