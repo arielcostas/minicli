@@ -34,7 +34,7 @@ public final class ArgumentParser {
 				continue;
 			}
 
-			var next = i + 1 < args.length ? args[i + 1].toLowerCase() : "";
+			var next = i + 1 < args.length ? args[i + 1] : "";
 
 			parseArg(arg, next, invocation);
 		}
