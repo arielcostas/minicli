@@ -54,7 +54,6 @@ public class GreetCommand implements RunnableCommand {
 	@Flag(name = "formal", description = "Whether to use a formal greeting")
 	private boolean formal;
 
-	@OnInvoke
 	public CommandOutput run() {
 		if (formal) {
 			return new CommandOutput("Good day, " + name + ". You're " + personAge + " years young.");
