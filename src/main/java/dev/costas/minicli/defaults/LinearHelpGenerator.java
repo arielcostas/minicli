@@ -53,10 +53,10 @@ public final class LinearHelpGenerator implements HelpGenerator {
 		var flags = this.getFlags(clazz);
 
 		var sb = new StringBuilder(SPACES);
-		sb.append(commandAnnotation.name());
 		if (!commandAnnotation.shortname().isEmpty()) {
-			sb.append(", ").append(commandAnnotation.shortname());
+			sb.append(commandAnnotation.shortname()).append(", ");
 		}
+		sb.append(commandAnnotation.name());
 		sb.append(SEPARATOR).append(commandAnnotation.description());
 
 		sb.append(printFlags(flags));
@@ -66,31 +66,33 @@ public final class LinearHelpGenerator implements HelpGenerator {
 	}
 
 	private String printFlags(List<Flag> flags) {
-		var sb = new StringBuilder("\n");
+		var sb = new StringBuilder();
 		if (flags.size() > 0) {
+			sb.append("\n");
 			sb.append(SPACES.repeat(2)).append("Flags:").append("\n");
 			for (var flag : flags) {
-				sb.append(printOption(flag.name(), flag.shortName(), flag.description())).append("\n");
+				sb.append(printOption(flag.name(), flag.shortname(), flag.description())).append("\n");
 			}
 		}
 		return sb.toString();
 	}
 
 	private String printParameters(List<Parameter> parameters) {
-		var sb = new StringBuilder("\n");
+		var sb = new StringBuilder();
 		if (parameters.size() > 0) {
+			sb.append("\n");
 			sb.append(SPACES.repeat(2)).append("Parameters:").append("\n");
 			for (var parameter : parameters) {
-				sb.append(printOption(parameter.name(), parameter.shortName(), parameter.description())).append("\n");
+				sb.append(printOption(parameter.name(), parameter.shortname(), parameter.description())).append("\n");
 			}
 		}
 		return sb.toString();
 	}
 
-	private String printOption(String name, String shortName, String description) {
+	private String printOption(String name, String shortname, String description) {
 		var line = new StringBuilder(SPACES.repeat(3));
-		if (!shortName.equals("")) {
-			line.append("-").append(shortName).append(", ");
+		if (!shortname.equals("")) {
+			line.append("-").append(shortname).append(", ");
 		}
 		line.append("--").append(name);
 		line.append(SPACES).append(description);

@@ -1,9 +1,6 @@
 package dev.costas.minicli;
 
 import dev.costas.minicli.annotation.Command;
-import dev.costas.minicli.annotation.Flag;
-import dev.costas.minicli.annotation.Parameter;
-import dev.costas.minicli.defaults.ArgumentParser;
 import dev.costas.minicli.exceptions.HelpException;
 import dev.costas.minicli.exceptions.IllegalValueFormatException;
 import dev.costas.minicli.exceptions.QuitException;
@@ -13,10 +10,8 @@ import dev.costas.minicli.framework.HelpGenerator;
 import dev.costas.minicli.framework.Instantiator;
 import dev.costas.minicli.models.ApplicationParams;
 import dev.costas.minicli.models.CommandOutput;
-import dev.costas.minicli.models.Invocation;
 import org.reflections.Reflections;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -102,7 +97,7 @@ public class MinicliApplication {
 
 				if (instance instanceof RunnableCommand runnableInstance) {
 					try {
-						Inflater.inflateInstance((RunnableCommand) instance, args);
+						Inflater.inflateInstance(runnableInstance, args);
 					} catch (HelpException e) {
 						return this.helpGenerator.show(application, e.getClazz());
 					}
@@ -127,8 +122,8 @@ public class MinicliApplication {
 
 		return reflections.getTypesAnnotatedWith(Command.class).stream().filter(c -> {
 			var name = c.getAnnotation(Command.class).name().toLowerCase();
-			var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
-			return !forbiddenCommands.contains(name) && !forbiddenCommands.contains(shortName);
+			var shortname = c.getAnnotation(Command.class).shortname().toLowerCase();
+			return !forbiddenCommands.contains(name) && !forbiddenCommands.contains(shortname);
 		}).toList();
 	}
 
@@ -138,8 +133,8 @@ public class MinicliApplication {
 	private List<Class<?>> getCandidates(String arg, List<Class<?>> classes) {
 		return classes.stream().filter(c -> {
 			var name = c.getAnnotation(Command.class).name().toLowerCase();
-			var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
-			return name.equals(arg) || shortName.equals(arg);
+			var shortname = c.getAnnotation(Command.class).shortname().toLowerCase();
+			return name.equals(arg) || shortname.equals(arg);
 		}).toList();
 	}
 }

@@ -70,7 +70,7 @@ final class Inflater {
 
 		// If the value is null, gets the value of the flag with the short name (if it exists)
 		if (value == null) {
-			value = invocation.getFlag(flag.shortName());
+			value = invocation.getFlag(flag.shortname());
 		}
 
 		// If the value is null, it means that the flag was not passed, use the default value
