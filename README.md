@@ -15,7 +15,6 @@ create command-line applications with a consistent interface and a simple way to
 Minicli is available on Maven Central. To use it, add the following dependency to your `pom.xml`:
 
 ```xml
-
 <dependency>
 	<groupId>dev.costas</groupId>
 	<artifactId>minicli</artifactId>

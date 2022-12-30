@@ -6,6 +6,7 @@ import dev.costas.minicli.annotation.Parameter;
 import dev.costas.minicli.defaults.ArgumentParser;
 import dev.costas.minicli.exceptions.HelpException;
 import dev.costas.minicli.exceptions.QuitException;
+import dev.costas.minicli.exceptions.UnsupportedParameterTypeException;
 import dev.costas.minicli.framework.CommandExecutor;
 import dev.costas.minicli.framework.HelpGenerator;
 import dev.costas.minicli.framework.Instantiator;
@@ -58,8 +59,10 @@ public class MinicliApplication {
 	 * @param clazz The package to scan for commands. It also scans subpackages.
 	 * @param args  The arguments to pass to the command.
 	 * @return The output of the command.
+	 * @throws QuitException                     If the user wants to quit the application.
+	 * @throws UnsupportedParameterTypeException If a command parameter has an unsupported type.
 	 */
-	public CommandOutput run(Class<?> clazz, String[] args) throws QuitException {
+	public CommandOutput run(Class<?> clazz, String[] args) throws QuitException, UnsupportedParameterTypeException {
 		try {
 			return actuallyRun(clazz, args);
 		} catch (IllegalAccessException e) {
@@ -67,9 +70,9 @@ public class MinicliApplication {
 		}
 	}
 
-	private CommandOutput actuallyRun(Class<?> clazz, String[] args) throws QuitException, IllegalAccessException {
+	private CommandOutput actuallyRun(Class<?> clazz, String[] args) throws QuitException, IllegalAccessException, UnsupportedParameterTypeException {
 		var classes = getCommands(clazz.getPackageName());
-		if (args.length == 0 ) {
+		if (args.length == 0) {
 			return this.helpGenerator.show(application, classes);
 		}
 
@@ -96,14 +99,14 @@ public class MinicliApplication {
 			case 1 -> {
 				var instance = instantiator.getInstance(candidades.get(0));
 
-				if (!(instance instanceof RunnableCommand)) {
+				if (instance instanceof RunnableCommand runnableInstance) {
+					try {
+						Inflater.inflateInstance((RunnableCommand) instance, args);
+					} catch (HelpException e) {
+						return this.helpGenerator.show(application, e.getClazz());
+					}
+				} else {
 					throw new RuntimeException("Command class must implement RunnableCommand");
-				}
-
-				try {
-					inflateInstance(instance, args);
-				} catch (HelpException e) {
-					return this.helpGenerator.show(application, e.getClazz());
 				}
 				return commandExecutor.execute((RunnableCommand) instance);
 			}
@@ -111,108 +114,7 @@ public class MinicliApplication {
 		}
 	}
 
-	/**
-	 * Receives a class instance and injects the parameters and flags from the given arguments.
-	 *
-	 * @param instance The instance to inject the parameters and flags.
-	 * @param args     The arguments to parse.
-	 */
-	private void inflateInstance(Object instance, String[] args) throws IllegalAccessException, NumberFormatException, HelpException {
-		ArgumentParser argumentParser = new ArgumentParser();
-		var invocation = argumentParser.parse(args);
-		var clazz = instance.getClass();
 
-		if (invocation.getFlags().containsKey("help") || invocation.getFlags().containsKey("h")) {
-			throw new HelpException(clazz);
-		}
-
-		for (Field field : clazz.getDeclaredFields()) {
-			var flagAnnotation = field.getAnnotation(Flag.class);
-			if (flagAnnotation != null) {
-				if (flagAnnotation.name().equals("")) {
-					throw new RuntimeException("Flag name cannot be empty.");
-				}
-
-				if (flagAnnotation.name().equals("help")) {
-					throw new RuntimeException("Flag name cannot be 'help'.");
-				}
-
-				inflateFlag(field, instance, invocation);
-				continue; // Skip the parameter injection since flags cannot be parameters.
-			}
-
-			var parameterAnnotation = field.getAnnotation(Parameter.class);
-			if (parameterAnnotation != null) {
-				if (parameterAnnotation.name().equals("")) {
-					throw new RuntimeException("Parameter name cannot be empty.");
-				}
-
-				if (parameterAnnotation.name().equals("help") || parameterAnnotation.name().equals("h") || parameterAnnotation.shortName().equals("h")) {
-					throw new RuntimeException("Parameter name cannot be 'help'.");
-				}
-
-				inflateParameter(field, instance, invocation);
-			}
-		}
-	}
-
-	private void inflateFlag(Field field, Object instance, Invocation invocation) throws IllegalAccessException {
-		// Gets the annotation
-		var flag = field.getAnnotation(Flag.class);
-
-		// Must be a boolean, otherwise it's not a flag
-		if (field.getType() != boolean.class && field.getType() != Boolean.class) {
-			throw new RuntimeException("Flag " + field.getName() + " must be a boolean.");
-		}
-
-		// Gets the value of the flag with the long name
-		var value = invocation.getFlag(flag.name());
-
-		// If the value is null, gets the value of the flag with the short name (if it exists)
-		if (value == null) {
-			value = invocation.getFlag(flag.shortName());
-		}
-
-		// If the value is null, it means that the flag was not passed, use the default value
-		if (value == null) {
-			value = flag.defaultValue();
-		}
-
-		field.setAccessible(true);
-		field.set(instance, value);
-		field.setAccessible(false);
-	}
-
-	private void inflateParameter(Field field, Object instance, Invocation invocation) throws IllegalAccessException, NumberFormatException {
-		// Gets the annotation
-		var parameterAnnotation = field.getAnnotation(Parameter.class);
-		var value = invocation.getParameter(parameterAnnotation.name());
-
-		// If the value is null, it means that the parameter was not passed, try with the short name
-		if (value == null) {
-			value = invocation.getParameter(parameterAnnotation.shortName());
-		}
-
-		// If the value is null, it means that the parameter was not passed, use the default value and throw if required
-		if (value == null) {
-			if (parameterAnnotation.required()) {
-				throw new RuntimeException("Required parameter " + parameterAnnotation.name() + " not found.");
-			}
-			value = invocation.getParameter(parameterAnnotation.defaultValue());
-		}
-
-		// Try to parse the value to the correct type and set it to the field
-		field.setAccessible(true);
-		switch (field.getType().getName()) {
-			case "java.lang.String" -> field.set(instance, value);
-			case "int", "java.lang.Integer" -> field.set(instance, Integer.parseInt(value));
-			case "long", "java.lang.Long" -> field.set(instance, Long.parseLong(value));
-			case "float", "java.lang.Float" -> field.set(instance, Float.parseFloat(value));
-			case "double", "java.lang.Double" -> field.set(instance, Double.parseDouble(value));
-			default -> throw new RuntimeException("Unsupported parameter type " + field.getType().getName());
-		}
-		field.setAccessible(false);
-	}
 
 
 	/**
@@ -235,11 +137,11 @@ public class MinicliApplication {
 	 * Gets the command class that matches the given name.
 	 */
 	private List<Class<?>> getCandidates(String arg, List<Class<?>> classes) {
-		return classes.stream().filter(c -> {
+		return classes.stream()
+			.filter(c -> {
 			var name = c.getAnnotation(Command.class).name().toLowerCase();
 			var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
 			return name.equals(arg) || shortName.equals(arg);
 		}).toList();
 	}
-
 }

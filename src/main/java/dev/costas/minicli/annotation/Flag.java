@@ -37,7 +37,7 @@ public @interface Flag {
 	 *
 	 * @return The short name of the flag.
 	 */
-	String shortName();
+	String shortname();
 
 	/**
 	 * A description of the flag. This is used to generate the help message.

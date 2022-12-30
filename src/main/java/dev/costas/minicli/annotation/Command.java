@@ -7,7 +7,7 @@ import java.lang.annotation.*;
  *
  * @since 1.0.0
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Command {
 	/**

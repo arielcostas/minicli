@@ -30,7 +30,7 @@ public @interface Parameter {
 	 *
 	 * @return the short name of the parameter
 	 */
-	String shortName() default "";
+	String shortname() default "";
 
 	/**
 	 * The description of the parameter. It's used in the help message.
@@ -40,15 +40,14 @@ public @interface Parameter {
 	String description() default "";
 
 	/**
-	 * Whether the parameter is required or not. If it's required and it's not passed, the command will fail.
-	 * If it's not required, the command will use the default value if it's not passed.
-	 *
-	 * @return true if the parameter is required, false otherwise
-	 */
-	boolean required() default false;
-
-	/**
-	 * The default value of the parameter. It's used if the parameter is not required and it's not passed.
+	 * The default string value of the parameter. If the parameter is not passed, this value will be used.
+	 * <p>
+	 * Note that this value is a string, and will be converted to the type of the field.
+	 * For example, if the field is an `int`, the value will be parsed as an integer.
+	 * <p>
+	 * If the default value is not a valid value for the field type, an exception will be thrown.
+	 * <p>
+	 * If the default value is an empty string, the field will be set to `null`.
 	 *
 	 * @return The default value of the parameter.
 	 */
