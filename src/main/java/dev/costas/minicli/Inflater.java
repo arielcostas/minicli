@@ -4,6 +4,7 @@ import dev.costas.minicli.annotation.Flag;
 import dev.costas.minicli.annotation.Parameter;
 import dev.costas.minicli.defaults.ArgumentParser;
 import dev.costas.minicli.exceptions.HelpException;
+import dev.costas.minicli.exceptions.IllegalValueFormatException;
 import dev.costas.minicli.exceptions.UnsupportedParameterTypeException;
 import dev.costas.minicli.models.Invocation;
 
@@ -16,7 +17,7 @@ final class Inflater {
 	 * @param instance The instance to inject the parameters and flags.
 	 * @param args     The arguments to parse.
 	 */
-	static void inflateInstance(RunnableCommand instance, String[] args) throws IllegalAccessException, NumberFormatException, HelpException, UnsupportedParameterTypeException {
+	static void inflateInstance(RunnableCommand instance, String[] args) throws IllegalAccessException, NumberFormatException, HelpException, UnsupportedParameterTypeException, IllegalValueFormatException {
 		ArgumentParser argumentParser = new ArgumentParser();
 		var invocation = argumentParser.parse(args);
 		var clazz = instance.getClass();
@@ -46,7 +47,7 @@ final class Inflater {
 					throw new RuntimeException("Parameter name cannot be empty.");
 				}
 
-				if (parameterAnnotation.name().equals("help") || parameterAnnotation.name().equals("h") || parameterAnnotation.shortName().equals("h")) {
+				if (parameterAnnotation.name().equals("help") || parameterAnnotation.name().equals("h") || parameterAnnotation.shortname().equals("h")) {
 					throw new RuntimeException("Parameter name cannot be 'help'.");
 				}
 
@@ -82,14 +83,14 @@ final class Inflater {
 		field.setAccessible(false);
 	}
 
-	static void inflateParameter(Field field, RunnableCommand instance, Invocation invocation) throws IllegalAccessException, NumberFormatException, UnsupportedParameterTypeException {
+	static void inflateParameter(Field field, RunnableCommand instance, Invocation invocation) throws IllegalAccessException, NumberFormatException, UnsupportedParameterTypeException, IllegalValueFormatException {
 		// Gets the annotation
 		var parameterAnnotation = field.getAnnotation(Parameter.class);
 		var value = invocation.getParameter(parameterAnnotation.name());
 
 		// If the value is null, it means that the parameter was not passed, try with the short name
 		if (value == null) {
-			value = invocation.getParameter(parameterAnnotation.shortName());
+			value = invocation.getParameter(parameterAnnotation.shortname());
 		}
 
 		// If the value is null, it means that the parameter was not passed, use the default value and throw if required
@@ -99,15 +100,21 @@ final class Inflater {
 
 		// Try to parse the value to the correct type and set it to the field
 		field.setAccessible(true);
-		switch (field.getType().getName()) {
-			case "java.lang.String" -> field.set(instance, value);
-			case "int", "java.lang.Integer" -> field.set(instance, Integer.parseInt(value));
-			case "long", "java.lang.Long" -> field.set(instance, Long.parseLong(value));
-			case "float", "java.lang.Float" -> field.set(instance, Float.parseFloat(value));
-			case "double", "java.lang.Double" -> field.set(instance, Double.parseDouble(value));
-			default -> throw new UnsupportedParameterTypeException(
-				instance.getClass().getName(), field.getName()
-			);
+		try {
+
+
+			switch (field.getType().getName()) {
+				case "java.lang.String" -> field.set(instance, value);
+				case "int", "java.lang.Integer" -> field.set(instance, Integer.parseInt(value));
+				case "long", "java.lang.Long" -> field.set(instance, Long.parseLong(value));
+				case "float", "java.lang.Float" -> field.set(instance, Float.parseFloat(value));
+				case "double", "java.lang.Double" -> field.set(instance, Double.parseDouble(value));
+				default -> throw new UnsupportedParameterTypeException(
+					instance.getClass().getName(), field.getName()
+				);
+			}
+		} catch (NumberFormatException e) {
+			throw new IllegalValueFormatException(field.getName(), value);
 		}
 		field.setAccessible(false);
 	}

@@ -5,6 +5,7 @@ import dev.costas.minicli.annotation.Flag;
 import dev.costas.minicli.annotation.Parameter;
 import dev.costas.minicli.defaults.ArgumentParser;
 import dev.costas.minicli.exceptions.HelpException;
+import dev.costas.minicli.exceptions.IllegalValueFormatException;
 import dev.costas.minicli.exceptions.QuitException;
 import dev.costas.minicli.exceptions.UnsupportedParameterTypeException;
 import dev.costas.minicli.framework.CommandExecutor;
@@ -62,7 +63,7 @@ public class MinicliApplication {
 	 * @throws QuitException                     If the user wants to quit the application.
 	 * @throws UnsupportedParameterTypeException If a command parameter has an unsupported type.
 	 */
-	public CommandOutput run(Class<?> clazz, String[] args) throws QuitException, UnsupportedParameterTypeException {
+	public CommandOutput run(Class<?> clazz, String[] args) throws QuitException, UnsupportedParameterTypeException, IllegalValueFormatException {
 		try {
 			return actuallyRun(clazz, args);
 		} catch (IllegalAccessException e) {
@@ -70,7 +71,7 @@ public class MinicliApplication {
 		}
 	}
 
-	private CommandOutput actuallyRun(Class<?> clazz, String[] args) throws QuitException, IllegalAccessException, UnsupportedParameterTypeException {
+	private CommandOutput actuallyRun(Class<?> clazz, String[] args) throws QuitException, IllegalAccessException, UnsupportedParameterTypeException, IllegalValueFormatException {
 		var classes = getCommands(clazz.getPackageName());
 		if (args.length == 0) {
 			return this.helpGenerator.show(application, classes);
@@ -115,8 +116,6 @@ public class MinicliApplication {
 	}
 
 
-
-
 	/**
 	 * Gets all classes in classpath that are annotated with @Command
 	 *
@@ -137,8 +136,7 @@ public class MinicliApplication {
 	 * Gets the command class that matches the given name.
 	 */
 	private List<Class<?>> getCandidates(String arg, List<Class<?>> classes) {
-		return classes.stream()
-			.filter(c -> {
+		return classes.stream().filter(c -> {
 			var name = c.getAnnotation(Command.class).name().toLowerCase();
 			var shortName = c.getAnnotation(Command.class).shortname().toLowerCase();
 			return name.equals(arg) || shortName.equals(arg);
